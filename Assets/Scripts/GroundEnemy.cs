@@ -6,8 +6,8 @@ public class GroundEnemy : MonoBehaviour {
 
 
     [SerializeField]
-    [Range(0, 1)]
-    private float _acceleration = 0.9f;
+    [Range(0, 10)]
+    private float _acceleration = 30f;
 
     [SerializeField]
     private Vector2
