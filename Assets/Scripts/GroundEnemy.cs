@@ -22,7 +22,7 @@ public class GroundEnemy : MonoBehaviour {
 
     void Start ()
     {
-        _worldRadius = ServiceLocator.Locate<Globe>().Size / 2;
+        _worldRadius = ServiceLocator.Locate<Globe>().Radius;
         _rigidBody = GetComponent<Rigidbody>();
 	}
 	
