@@ -21,8 +21,8 @@ public class SpaceShip : MonoBehaviour
 
 	void Start ()
     {
-        _radius = ServiceLocator.Locate<Globe>().Radius / 2;
-        UpdatePosition();
+        _radius = ServiceLocator.Locate<Globe>().Radius;
+        UpdatePosition(true);
     }
 	
 	void Update ()
@@ -47,6 +47,7 @@ public class SpaceShip : MonoBehaviour
         if (Input.GetKey(KeyCode.D))
             _move += new Vector2(_movementSpeed.x, 0);
 
+        _move /= _radius; // so the speed doesn't change when you scale the planet
 
         _position2D += _move * Time.deltaTime;
 
@@ -61,10 +62,16 @@ public class SpaceShip : MonoBehaviour
     {
         _moveTarget = new Vector3(Mathf.Sin(_position2D.x), Mathf.Cos(_position2D.x), 0) * (_radius + _position2D.y);
 
-        if (set)
+        if (set) // when the position of the spaceship shouldn't interpolate
         {
             transform.position = _moveTarget;
             transform.up = transform.position.normalized;
+
+            // also update the camera position
+            FollowCam cam = ServiceLocator.Locate<FollowCam>();
+
+            if (cam != null)
+                cam.SetCameraTransform(transform);
         }
     }
     #endregion
@@ -72,14 +79,16 @@ public class SpaceShip : MonoBehaviour
     private void OnValidate()
     {
         ServiceLocator.Provide(this);
-
-        Globe globe = ServiceLocator.Locate<Globe>();
-
-        if (globe == null)
-            return;
-
-        _radius = globe.Radius / 2;
         UpdatePosition(true);
+    }
+
+    public float Radius
+    {
+        set
+        {
+            _radius = value;
+            UpdatePosition(true); // update the position when the radius is changed
+        }
     }
 
     public Vector2 Move

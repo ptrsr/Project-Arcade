@@ -23,8 +23,9 @@ public class FollowCam : MonoBehaviour
 	void Start ()
     {
         _ship = ServiceLocator.Locate<SpaceShip>();
-        _radius = ServiceLocator.Locate<Globe>().Radius / 2;
+        _radius = ServiceLocator.Locate<Globe>().Radius;
 
+        _cameraTarget = _ship.transform.position;
         SetCameraTransform(_ship.transform);
 	}
 	
@@ -39,10 +40,8 @@ public class FollowCam : MonoBehaviour
 
         SpaceShip ship = ServiceLocator.Locate<SpaceShip>();
 
-        if (ship == null)
-            return;
-
-        SetCameraTransform(ship.transform);
+        if (ship != null)
+            SetCameraTransform(ship.transform);
     }
 
     private void Follow(Transform HoverTarget, Vector3 focusPosition)
@@ -56,10 +55,10 @@ public class FollowCam : MonoBehaviour
         return focusTarget.TransformPoint(new Vector3(0, Mathf.Sin(_angle), Mathf.Cos(_angle)) * _distance);
     }
 
-    private void SetCameraTransform(Transform focusTarget)
+    public void SetCameraTransform(Transform focusTarget)
     {
         transform.position = HoverPosition(focusTarget);
-        transform.LookAt(focusTarget.transform);
+        transform.rotation = Quaternion.LookRotation((focusTarget.position - transform.position).normalized, focusTarget.up);
     }
 
     private Vector3 GetFocusPosition(SpaceShip ship)
