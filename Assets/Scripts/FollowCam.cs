@@ -12,21 +12,25 @@ public class FollowCam : MonoBehaviour
 
     [SerializeField] [Range(0, 20)]
     private float
-        _moveSpeed = 0.9f,
-        _extraSpeed = 0.9f;
+        _moveSpeed     = 0.9f,
+        _rotateSpeed   = 0.9f;
+
+    private Vector3 _cameraTarget;
+    private float _radius;
 
     private SpaceShip _ship;
 
 	void Start ()
     {
         _ship = ServiceLocator.Locate<SpaceShip>();
+        _radius = ServiceLocator.Locate<Globe>().Radius / 2;
 
         SetCameraTransform(_ship.transform);
 	}
 	
 	void Update ()
     {
-        Follow(_ship.transform, _ship.CameraTarget);
+        Follow(_ship.transform, GetFocusPosition(_ship));
 	}
 
     private void OnValidate()
@@ -56,5 +60,15 @@ public class FollowCam : MonoBehaviour
     {
         transform.position = HoverPosition(focusTarget);
         transform.LookAt(focusTarget.transform);
+    }
+
+    private Vector3 GetFocusPosition(SpaceShip ship)
+    {
+        Vector2 camPosition2D = ship.Position2D + ship.Move * _forwardMulti * Time.deltaTime;
+        Vector3 camPosition3D = new Vector3(Mathf.Sin(camPosition2D.x), Mathf.Cos(camPosition2D.x), 0) * (_radius + camPosition2D.y);
+
+        _cameraTarget = Vector3.Lerp(_cameraTarget, camPosition3D, _rotateSpeed);
+
+        return _cameraTarget;
     }
 }

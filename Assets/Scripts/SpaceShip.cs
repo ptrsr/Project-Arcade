@@ -12,42 +12,45 @@ public class SpaceShip : MonoBehaviour
         _movementSpeed = new Vector2(),
         _position2D    = new Vector2();
 
+    private Vector2 
+        _move          = new Vector2();
+
     private Vector3 _moveTarget;
-    private Vector3 _cameraTarget;
 
     private float _radius;
 
 	void Start ()
     {
-        _radius = ServiceLocator.Locate<Globe>().Size / 2;
+        _radius = ServiceLocator.Locate<Globe>().Radius / 2;
         UpdatePosition();
     }
 	
 	void Update ()
     {
         Movement();
-
     }
 
+    #region Movement
     private void Movement()
     {
-        Vector2 move = new Vector2();
+        _move = new Vector2();
 
         if (Input.GetKey(KeyCode.S))
-            move -= new Vector2(0, _movementSpeed.y);
+            _move -= new Vector2(0, _movementSpeed.y);
 
         if (Input.GetKey(KeyCode.W))
-            move += new Vector2(0, _movementSpeed.y);
+            _move += new Vector2(0, _movementSpeed.y);
 
         if (Input.GetKey(KeyCode.A))
-            move -= new Vector2(_movementSpeed.x, 0);
+            _move -= new Vector2(_movementSpeed.x, 0);
 
         if (Input.GetKey(KeyCode.D))
-            move += new Vector2(_movementSpeed.x, 0);
+            _move += new Vector2(_movementSpeed.x, 0);
 
-        _position2D += move * Time.deltaTime;
 
-        if (move != new Vector2())
+        _position2D += _move * Time.deltaTime;
+
+        if (_move != new Vector2())
             UpdatePosition();
 
         transform.position = Vector3.Lerp(transform.position, _moveTarget, _acceleration);
@@ -64,6 +67,7 @@ public class SpaceShip : MonoBehaviour
             transform.up = transform.position.normalized;
         }
     }
+    #endregion
 
     private void OnValidate()
     {
@@ -74,12 +78,17 @@ public class SpaceShip : MonoBehaviour
         if (globe == null)
             return;
 
-        _radius = globe.Size / 2;
+        _radius = globe.Radius / 2;
         UpdatePosition(true);
     }
 
-    public Vector3 CameraTarget
+    public Vector2 Move
     {
-        get { return _cameraTarget; }
+        get { return _move; }
+    }
+
+    public Vector2 Position2D
+    {
+        get { return _position2D; }
     }
 }

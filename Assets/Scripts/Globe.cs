@@ -39,10 +39,13 @@ public class Globe : MonoBehaviour
 
         transform.localScale = new Vector3(_size, _size, _size);
 
-        ServiceLocator.Locate<SpaceShip>().UpdatePosition();
+        SpaceShip ship = ServiceLocator.Locate<SpaceShip>();
+        
+        if (ship != null)
+            ship.UpdatePosition();
     }
 
-    public float Size
+    public float Radius
     {
         get { return _size; }
     }
