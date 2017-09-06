@@ -54,6 +54,8 @@ public class SpaceShip : MonoBehaviour
         transform.up = transform.position.normalized;
     }
 
+
+
     public void UpdatePosition(bool set = false)
     {
         _moveTarget = new Vector3(Mathf.Sin(_position2D.x), Mathf.Cos(_position2D.x), 0) * (_radius + _position2D.y);
