@@ -19,6 +19,13 @@ public class SpaceShip : MonoBehaviour
 
     private float _radius;
 
+    [SerializeField]
+    private Transform _weaponAttachment;
+
+    [SerializeField]
+    private GameObject _weaponPrefab;
+    private Weapon _weapon;
+
 	void Start ()
     {
         _radius = ServiceLocator.Locate<Globe>().Radius;
@@ -27,7 +34,39 @@ public class SpaceShip : MonoBehaviour
 	
 	void Update ()
     {
+        if (_weapon != null)
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+
+            Physics.Raycast(ray, out hit);
+            _weapon.Aim(_weaponAttachment.position, hit.point);
+        }
+
         Movement();
+    }
+
+    public void SetWeapon(GameObject prefab)
+    {
+        if (!Application.isPlaying)
+            return;
+
+        if (_weapon != null)
+            Destroy(_weapon.gameObject);
+
+        if (prefab == null)
+            return;
+
+        if (prefab.GetComponent<Weapon>() == null)
+            return;
+
+
+
+        GameObject newPrefab = GameObject.Instantiate(_weaponPrefab);
+        _weapon = newPrefab.GetComponent<Weapon>();
+
+        newPrefab.transform.parent = _weaponAttachment;
+        newPrefab.transform.localPosition = new Vector3();
     }
 
     #region Movement
@@ -80,6 +119,8 @@ public class SpaceShip : MonoBehaviour
     {
         ServiceLocator.Provide(this);
         UpdatePosition(true);
+
+        SetWeapon(_weaponPrefab);
     }
 
     public float Radius
