@@ -71,31 +71,27 @@ public class SpaceShip : MonoBehaviour
         _move = new Vector2();
 
         if (Input.GetKey(KeyCode.S))
-            _move -= new Vector2(0, _movementSpeed.y);
+            _move += new Vector2(0, -1);
 
         if (Input.GetKey(KeyCode.W))
-            _move += new Vector2(0, _movementSpeed.y);
+            _move += new Vector2(0, 1);
 
         if (Input.GetKey(KeyCode.A))
-            _move -= new Vector2(_movementSpeed.x, 0);
+            _move += new Vector2(-1, 0);
 
         if (Input.GetKey(KeyCode.D))
-            _move += new Vector2(_movementSpeed.x, 0);
+            _move += new Vector2(1, 0);
 
-        _move /= _radius; // so the speed doesn't change when you scale the planet
-
-        _position2D += _move * Time.deltaTime;
+        float moveScalar = _radius + _position2D.y; // so the ship's speed doesn't change with altitude
+        _position2D += new Vector2((_move.x * _movementSpeed.x) / moveScalar, _move.y * _movementSpeed.y)* Time.deltaTime;
 
         if (_move != new Vector2())
             UpdatePosition();
 
-        Vector3 nextMove = transform.position;
         transform.position = Vector3.Lerp(transform.position, _moveTarget, _acceleration);
-        nextMove -= transform.position;
-
         transform.up = transform.position.normalized;
 
-        return new Vector2(nextMove.x, nextMove.y);
+        return _move;
     }
 
 
@@ -133,6 +129,11 @@ public class SpaceShip : MonoBehaviour
             _radius = value;
             UpdatePosition(true); // update the position when the radius is changed
         }
+    }
+
+    public Vector2 MovementSpeed
+    {
+        get { return _movementSpeed; }
     }
 
     public Vector2 Move
