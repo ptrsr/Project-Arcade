@@ -29,7 +29,7 @@ public class FollowCam : MonoBehaviour
         SetCameraTransform(_ship.transform);
 	}
 	
-	void Update ()
+	void FixedUpdate ()
     {
         Follow(_ship.transform, GetFocusPosition(_ship));
 	}

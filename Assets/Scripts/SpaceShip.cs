@@ -32,18 +32,19 @@ public class SpaceShip : MonoBehaviour
         UpdatePosition(true);
     }
 	
-	void Update ()
+	void FixedUpdate ()
     {
+        Vector2 nextMove = Movement();
+
         if (_weapon != null)
         {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
+            _weapon.Aim(nextMove);
 
-            Physics.Raycast(ray, out hit);
-            _weapon.Aim(_weaponAttachment.position, hit.point);
+            if (Input.GetKey(KeyCode.Space))
+                _weapon.Fire();
+            else
+                _weapon.Hold();
         }
-
-        Movement();
     }
 
     public void SetWeapon(GameObject prefab)
@@ -54,13 +55,8 @@ public class SpaceShip : MonoBehaviour
         if (_weapon != null)
             Destroy(_weapon.gameObject);
 
-        if (prefab == null)
+        if (prefab == null || prefab.GetComponent<Weapon>() == null)
             return;
-
-        if (prefab.GetComponent<Weapon>() == null)
-            return;
-
-
 
         GameObject newPrefab = GameObject.Instantiate(_weaponPrefab);
         _weapon = newPrefab.GetComponent<Weapon>();
@@ -70,7 +66,7 @@ public class SpaceShip : MonoBehaviour
     }
 
     #region Movement
-    private void Movement()
+    private Vector2 Movement()
     {
         _move = new Vector2();
 
@@ -93,8 +89,13 @@ public class SpaceShip : MonoBehaviour
         if (_move != new Vector2())
             UpdatePosition();
 
+        Vector3 nextMove = transform.position;
         transform.position = Vector3.Lerp(transform.position, _moveTarget, _acceleration);
+        nextMove -= transform.position;
+
         transform.up = transform.position.normalized;
+
+        return new Vector2(nextMove.x, nextMove.y);
     }
 
 

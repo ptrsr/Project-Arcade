@@ -5,14 +5,33 @@ using UnityEngine;
 [System.Serializable]
 public abstract class Weapon : MonoBehaviour
 {
-    public float _angle;
-    public float _rotateSpeed;
+    private bool _firing = false;
 
-    public abstract void Fire();
-
-    public void Aim(Vector3 weaponPos, Vector3 aimPos)
+    public void Fire()
     {
-        Quaternion desired = Quaternion.LookRotation((aimPos - weaponPos).normalized);
-        transform.rotation = Quaternion.RotateTowards(transform.rotation, desired, _rotateSpeed);
+        if (!_firing)
+            OnFireEnabled();
+
+        _firing = true;
+        OnFire();
     }
+
+    public void Hold()
+    {
+        if (_firing)
+            OnFireDisabled();
+
+        _firing = false;
+    }
+
+    protected virtual void OnFireEnabled() { }
+    protected virtual void OnFire() { }
+    protected virtual void OnFireDisabled() { }
+
+    public virtual void Aim(Vector2 movement) { }
+
+    //simple rotation if needed later
+
+    //Quaternion desired = Quaternion.LookRotation((aimPos2D - weaponPos).normalized);
+    //transform.rotation = Quaternion.RotateTowards(transform.rotation, desired, _rotateSpeed);
 }

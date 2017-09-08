@@ -2,13 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GroundEnemy : MonoBehaviour {
-
-
-    [SerializeField]
-    [Range(0, 10)]
-    private float _acceleration = 30f;
-
+public class GroundEnemy : GravityObject
+{
     [SerializeField]
     private Vector2
         _movementSpeed = new Vector2(),
@@ -18,21 +13,14 @@ public class GroundEnemy : MonoBehaviour {
 
     private Vector3 _moveTarget;
 
-    private Rigidbody _rigidBody;
-
-    void Start ()
+    protected override void Start ()
     {
+        base.Start();
         _worldRadius = ServiceLocator.Locate<Globe>().Radius;
-        _rigidBody = GetComponent<Rigidbody>();
 	}
-	
-	void Update ()
-    {
-        UseGravity();
-    }
 
-    private void UseGravity()
+    protected override void Update()
     {
-        _rigidBody.AddForce(transform.position.normalized * -_acceleration);
+        base.Update();
     }
 }
