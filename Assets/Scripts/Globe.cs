@@ -4,27 +4,27 @@ using UnityEngine;
 
 public class Globe : MonoBehaviour
 {
+    public delegate void OnGlobeChange();
+
     [SerializeField]
     private float
         _size = 10,
         _rotation = 0;
 
-	// Use this for initialization
-	void Start ()
+    public event OnGlobeChange onGlobeChange;
+
+    private Globe()
     {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+        ServiceLocator.Provide(this);
+    }
 
     private void OnValidate()
     {
-        ServiceLocator.Provide(this);
         SetWorldSize();
         SetRotation();
+
+        if (onGlobeChange != null)
+            onGlobeChange();
     }
 
     private void SetRotation()
@@ -38,18 +38,20 @@ public class Globe : MonoBehaviour
             _size = 0.1f;
 
         transform.localScale = new Vector3(_size, _size, _size);
-
-        SpaceShip ship = ServiceLocator.Locate<SpaceShip>();
-
-        if (ship == null)
-            return;
-
-        ship.Radius = Radius;
-        ship.UpdatePosition(true);
     }
 
     public float Radius
     {
         get { return _size / 2; }
+    }
+
+    public static Vector3 SceneToGlobePosition(Vector3 scenePosition)
+    {
+        return new Vector3(Mathf.Atan2(scenePosition.x, scenePosition.y), scenePosition.magnitude, Mathf.Sin(scenePosition.z / ServiceLocator.Locate<Globe>().Radius));
+    }
+
+    public static Vector3 GlobeToScenePosition(Vector3 globePosition)
+    {
+        return new Vector3(Mathf.Sin(globePosition.x), Mathf.Cos(globePosition.x), 0) * globePosition.y;
     }
 }

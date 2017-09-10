@@ -15,17 +15,15 @@ public class FollowCam : MonoBehaviour
         _moveSpeed     = 0.9f,
         _rotateSpeed   = 0.9f;
 
-    private Vector3 _cameraTarget;
-    private float _radius;
+    private Vector3 _currentFocusPos;
 
     private SpaceShip _ship;
 
 	void Start ()
     {
         _ship = ServiceLocator.Locate<SpaceShip>();
-        _radius = ServiceLocator.Locate<Globe>().Radius;
 
-        _cameraTarget = _ship.transform.position;
+        _currentFocusPos = _ship.transform.position;
         SetCameraTransform(_ship.transform);
 	}
 	
@@ -63,11 +61,9 @@ public class FollowCam : MonoBehaviour
 
     private Vector3 GetFocusPosition(SpaceShip ship)
     {
-        Vector2 camPosition2D = ship.Position2D + ship.Move * _forwardMulti * Time.deltaTime;
-        Vector3 camPosition3D = new Vector3(Mathf.Sin(camPosition2D.x), Mathf.Cos(camPosition2D.x), 0) * (_radius + camPosition2D.y);
+        Vector3 newFocusPos = ship.GlobePosition + new Vector3(0, ship.GlobeRadius, 0) +  (ship.GlobePosition - ship.MoveTarget.GlobePosition).normalized * _forwardMulti;
+        _currentFocusPos = Vector3.Slerp(_currentFocusPos, Globe.GlobeToScenePosition(newFocusPos), _rotateSpeed);
 
-        _cameraTarget = Vector3.Lerp(_cameraTarget, camPosition3D, _rotateSpeed);
-
-        return _cameraTarget;
+        return _currentFocusPos;
     }
 }
