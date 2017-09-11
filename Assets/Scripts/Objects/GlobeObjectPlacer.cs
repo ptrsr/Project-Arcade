@@ -2,8 +2,8 @@
 using System.Collections;
 using UnityEditor;
 
-[ExecuteInEditMode] [CustomEditor(typeof(Building))]
-public class ObjectBuilderEditor : Editor
+[ExecuteInEditMode] [CustomEditor(typeof(GlobeObject), true)]
+public class GlobeObjectPlacer : Editor
 {
     private bool _placing = false;
 
@@ -31,7 +31,7 @@ public class ObjectBuilderEditor : Editor
         if (!Physics.Raycast(ray, out hit))
             return;
 
-        Building building = (Building)target;
+        GlobeObject building = (GlobeObject)target;
         building.SetPosition(hit.point);
 
         if (Event.current.type == EventType.mouseDown)

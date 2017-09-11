@@ -2,17 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SpaceShip : GlobeObject
+public class SpaceShip : MovingObject
 {
-    [SerializeField] [Range(0, 1)]
-    private float _acceleration = 0.9f;
-
-    [SerializeField]
-    private Vector2
-        _movementSpeed = new Vector2();
-
-    private GlobeObject _moveTarget;
-
     [SerializeField]
     private Transform _weaponAttachment;
 
@@ -25,15 +16,15 @@ public class SpaceShip : GlobeObject
         ServiceLocator.Provide(this);
     }
 
-    private void Start ()
+    protected override void Start()
     {
-        _moveTarget = new GlobeObject(false);
-        _moveTarget.GlobePosition = GlobePosition;
+        base.Start();
     }
-	
-	void FixedUpdate ()
+
+    void FixedUpdate ()
     {
         Vector2 nextMove = Movement();
+        Move(nextMove);
 
         if (_weapon != null)
         {
@@ -80,11 +71,6 @@ public class SpaceShip : GlobeObject
         if (Input.GetKey(KeyCode.D))
             move += new Vector2(1, 0);
 
-        float moveScalar = GlobeRadius + GlobePosition.y; // so the ship's speed doesn't change with altitude
-        _moveTarget.GlobePosition += new Vector3((move.x * _movementSpeed.x) / moveScalar, move.y * _movementSpeed.y, 0) * Time.deltaTime;
-
-        GlobePosition = Vector3.Slerp(GlobePosition, _moveTarget.GlobePosition, _acceleration);
-
         return move;
     }
 
@@ -92,15 +78,5 @@ public class SpaceShip : GlobeObject
     {
         base.OnValidate();
         SetWeapon(_weaponPrefab);
-    }
-
-    public Vector2 MovementSpeed
-    {
-        get { return _movementSpeed; }
-    }
-
-    public GlobeObject MoveTarget
-    {
-        get { return _moveTarget; }
     }
 }

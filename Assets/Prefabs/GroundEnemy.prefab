@@ -38,7 +38,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1385122701096438}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -41.8, y: -25.5, z: 0}
+  m_LocalPosition: {x: 0, y: 56.145, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -109,9 +109,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6cf00641891b1fd4bafb6c4558c0eef0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _acceleration: 10
+  _globe: {fileID: 0}
+  _globePosition: {x: 0, y: 0, z: 0}
+  _rigidBody: {fileID: 0}
+  _gravity: 0
   _movementSpeed: {x: 0, y: 0}
   _position2D: {x: 0, y: 0}
+  _worldRadius: 0
+  _moveTarget: {x: 0, y: 0, z: 0}
 --- !u!135 &135377777373497896
 SphereCollider:
   m_ObjectHideFlags: 1

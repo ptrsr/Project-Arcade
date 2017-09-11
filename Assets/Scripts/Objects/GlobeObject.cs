@@ -9,17 +9,20 @@ public class GlobeObject : MonoBehaviour
     [SerializeField]
     private Vector3 _globePosition;
 
-    private bool _active = true;
 
-    public GlobeObject(bool active = true)
+    public GlobeObject()
     {
-        _active = active;
         Globe.onGlobeChange += OnGlobeChanged;
     }
 
     private void OnGlobeChanged()
     {
         GlobePosition = GlobePosition;
+    }
+
+    public void SetPosition(Vector3 ScenePosition)
+    {
+        GlobePosition = Globe.SceneToGlobePosition(ScenePosition) - new Vector3(0, GlobeRadius + GlobePosition.y, 0);
     }
 
     protected virtual void OnValidate()
@@ -34,21 +37,25 @@ public class GlobeObject : MonoBehaviour
         {
             _globePosition = value;
 
-            if (!_active)
-                return;
-
-            transform.position = new Vector3(Mathf.Sin(_globePosition.x), (Mathf.Cos(_globePosition.x) * Mathf.Cos(_globePosition.z)), Mathf.Sin(_globePosition.z)) * (Globe.Radius + _globePosition.y);
-            transform.up = GlobeUp;
+            try
+            {
+                transform.position = new Vector3(Mathf.Sin(_globePosition.x) * Mathf.Cos(_globePosition.z), (Mathf.Cos(_globePosition.x) * Mathf.Cos(_globePosition.z)), Mathf.Sin(_globePosition.z)) * (Globe.Radius + _globePosition.y);
+                transform.up = GlobeUp;
+            } catch { }
         }
     }
 
     public Vector3 WorldPosition
     {
-        get { return Globe.GlobeToScenePosition(_globePosition + new Vector3(0, GlobeRadius, 0)); }
+        get
+        {
+            try { return transform.position; }
+            catch { return Globe.GlobeToScenePosition(_globePosition + new Vector3(0, GlobeRadius, 0)); }
+        }
     }
 
 
-    private Globe Globe
+    public Globe Globe
     {
         get
         {

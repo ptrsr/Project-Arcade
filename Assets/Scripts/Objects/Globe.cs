@@ -5,13 +5,14 @@ using UnityEngine;
 public class Globe : MonoBehaviour
 {
     public delegate void OnGlobeChange();
+    public static event OnGlobeChange onGlobeChange;
 
     [SerializeField]
     private float
         _size = 10,
-        _rotation = 0;
+        _rotation = 0,
+        _gravityAcceleration = 10;
 
-    public event OnGlobeChange onGlobeChange;
 
     private Globe()
     {
@@ -23,8 +24,19 @@ public class Globe : MonoBehaviour
         SetWorldSize();
         SetRotation();
 
-        if (onGlobeChange != null)
-            onGlobeChange();
+        OnGlobeChanged();
+    }
+
+    void OnGlobeChanged()
+    {
+        if (onGlobeChange == null)
+            return;
+
+        foreach (OnGlobeChange change in onGlobeChange.GetInvocationList())
+            if (change.Target == null)
+                onGlobeChange -= change;
+
+        onGlobeChange();
     }
 
     private void SetRotation()
@@ -43,6 +55,11 @@ public class Globe : MonoBehaviour
     public float Radius
     {
         get { return _size / 2; }
+    }
+
+    public float Gravity
+    {
+        get { return _gravityAcceleration; }
     }
 
     public static Vector3 SceneToGlobePosition(Vector3 scenePosition)
