@@ -11,3 +11,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Scene-Ruud-Copy(0).unity
     guid: 9f44e8ea82959c6439f1e3e77cd4bd60
+  - enabled: 1
+    path: Assets/Scenes/Highscores.unity
+    guid: 1a91da470bc832747ba09419d181b6b9
+  - enabled: 1
+    path: Assets/Scenes/Controls.unity
+    guid: ce66a3e72b811b44da214096bf010c1c
