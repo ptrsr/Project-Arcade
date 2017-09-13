@@ -21,7 +21,7 @@ public class MovingObject : GlobeObject
 	
     protected void Move(Vector2 move)
     {
-        float moveScalar = GlobeRadius + GlobePosition.y; // so the ship's speed doesn't change with altitude
+        float moveScalar = GlobeRadius + GlobePosition.y; // so the object speed doesn't change with altitude
         _moveTarget.GlobePosition += new Vector3((move.x * _movementSpeed.x) / moveScalar, move.y * _movementSpeed.y, 0) * Time.deltaTime;
 
         GlobePosition = Vector3.Slerp(GlobePosition, _moveTarget.GlobePosition, _acceleration);
