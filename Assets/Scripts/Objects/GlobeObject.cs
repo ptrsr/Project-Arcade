@@ -9,6 +9,8 @@ public class GlobeObject : MonoBehaviour
     [SerializeField]
     private Vector3 _globePosition;
 
+    [SerializeField]
+    private bool _active = true;
 
     public GlobeObject()
     {
@@ -37,11 +39,11 @@ public class GlobeObject : MonoBehaviour
         {
             _globePosition = value;
 
-            try
-            {
-                transform.position = new Vector3(Mathf.Sin(_globePosition.x) * Mathf.Cos(_globePosition.z), (Mathf.Cos(_globePosition.x) * Mathf.Cos(_globePosition.z)), Mathf.Sin(_globePosition.z)) * (Globe.Radius + _globePosition.y);
-                transform.up = GlobeUp;
-            } catch { }
+            if (!_active)
+                return;
+
+            transform.position = new Vector3(Mathf.Sin(_globePosition.x) * Mathf.Cos(_globePosition.z), (Mathf.Cos(_globePosition.x) * Mathf.Cos(_globePosition.z)), Mathf.Sin(_globePosition.z)) * (Globe.Radius + _globePosition.y);
+            transform.up = GlobeUp;
         }
     }
 
@@ -64,6 +66,12 @@ public class GlobeObject : MonoBehaviour
 
             return _globe;
         }
+    }
+
+    public bool Active
+    {
+        get { return _active;  }
+        set { _active = value; }
     }
 
     public float GlobeRadius

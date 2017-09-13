@@ -1,0 +1,200 @@
+fileFormatVersion: 2
+guid: d4b4cfcecf451424cabcd85e8b7125d9
+timeCreated: 1505305307
+licenseType: Free
+ModelImporter:
+  serializedVersion: 21
+  fileIDToRecycleName:
+    100000: base_1
+    100002: base_2
+    100004: base_3
+    100006: base_4
+    100008: chimney_1_p1
+    100010: chimney_1_p2
+    100012: chimney_1_p3
+    100014: chimney_2_p1
+    100016: chimney_2_p2
+    100018: chimney_2_p3
+    100020: chimney_3_p1
+    100022: chimney_3_p2
+    100024: chimney_3_p3
+    100026: door_1
+    100028: door_2
+    100030: door_3
+    100032: //RootNode
+    100034: front_thing_1
+    100036: front_thing_2
+    100038: roof_window_1
+    100040: roof_window_2
+    100042: roof_window_3
+    100044: window_1
+    100046: window_2
+    400000: base_1
+    400002: base_2
+    400004: base_3
+    400006: base_4
+    400008: chimney_1_p1
+    400010: chimney_1_p2
+    400012: chimney_1_p3
+    400014: chimney_2_p1
+    400016: chimney_2_p2
+    400018: chimney_2_p3
+    400020: chimney_3_p1
+    400022: chimney_3_p2
+    400024: chimney_3_p3
+    400026: door_1
+    400028: door_2
+    400030: door_3
+    400032: //RootNode
+    400034: front_thing_1
+    400036: front_thing_2
+    400038: roof_window_1
+    400040: roof_window_2
+    400042: roof_window_3
+    400044: window_1
+    400046: window_2
+    2300000: base_1
+    2300002: base_2
+    2300004: base_3
+    2300006: base_4
+    2300008: chimney_1_p1
+    2300010: chimney_1_p2
+    2300012: chimney_1_p3
+    2300014: chimney_2_p1
+    2300016: chimney_2_p2
+    2300018: chimney_2_p3
+    2300020: chimney_3_p1
+    2300022: chimney_3_p2
+    2300024: chimney_3_p3
+    2300026: door_1
+    2300028: door_2
+    2300030: door_3
+    2300032: front_thing_1
+    2300034: front_thing_2
+    2300036: roof_window_1
+    2300038: roof_window_2
+    2300040: roof_window_3
+    2300042: window_1
+    2300044: window_2
+    3300000: base_1
+    3300002: base_2
+    3300004: base_3
+    3300006: base_4
+    3300008: chimney_1_p1
+    3300010: chimney_1_p2
+    3300012: chimney_1_p3
+    3300014: chimney_2_p1
+    3300016: chimney_2_p2
+    3300018: chimney_2_p3
+    3300020: chimney_3_p1
+    3300022: chimney_3_p2
+    3300024: chimney_3_p3
+    3300026: door_1
+    3300028: door_2
+    3300030: door_3
+    3300032: front_thing_1
+    3300034: front_thing_2
+    3300036: roof_window_1
+    3300038: roof_window_2
+    3300040: roof_window_3
+    3300042: window_1
+    3300044: window_2
+    4300000: roof_window_1
+    4300002: base_4
+    4300004: base_3
+    4300006: chimney_2_p1
+    4300008: chimney_2_p2
+    4300010: chimney_2_p3
+    4300012: door_2
+    4300014: door_1
+    4300016: front_thing_2
+    4300018: base_2
+    4300020: window_2
+    4300022: window_1
+    4300024: roof_window_2
+    4300026: roof_window_3
+    4300028: door_3
+    4300030: front_thing_1
+    4300032: base_1
+    4300034: chimney_3_p1
+    4300036: chimney_3_p2
+    4300038: chimney_3_p3
+    4300040: chimney_1_p3
+    4300042: chimney_1_p2
+    4300044: chimney_1_p1
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
