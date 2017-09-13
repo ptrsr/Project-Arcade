@@ -16,6 +16,7 @@ public class MovingObject : GlobeObject
     protected virtual void Start ()
     {
         _moveTarget = new GlobeObject();
+        _moveTarget.Active = false;
         _moveTarget.GlobePosition = GlobePosition;
     }
 	
