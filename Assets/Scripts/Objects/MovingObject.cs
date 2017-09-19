@@ -9,6 +9,9 @@ public class MovingObject : GlobeObject
     private float _acceleration = 0.9f;
 
     [SerializeField]
+    private float _rotateSpeed;
+
+    [SerializeField]
     private Vector2
         _movementSpeed = new Vector2();
 
@@ -22,19 +25,27 @@ public class MovingObject : GlobeObject
         _moveTarget.GlobePosition = GlobePosition;
     }
 	
-    protected void Move(Vector2 move, bool saveOrientation = false)
+    protected void Move(Vector2 move)
     {
         if (!Active)
             return;
 
         float moveScalar = GlobeRadius + GlobePosition.y; // so the object speed doesn't change with altitude
-        _moveTarget.GlobePosition += new Vector3((move.x * _movementSpeed.x) / moveScalar, move.y * _movementSpeed.y, 0) * Time.deltaTime;
 
-        Quaternion rotation = transform.rotation;
+        Vector3 direction = Globe.GlobeToScenePosition(_moveTarget.GlobePosition);
+        _moveTarget.GlobePosition += new Vector3((move.x * _movementSpeed.x) / moveScalar, 0, (move.y * _movementSpeed.y) / moveScalar) * Time.deltaTime;
+        direction = (Globe.GlobeToScenePosition(_moveTarget.GlobePosition) - direction).normalized;
+
+        Quaternion lastRotation = transform.rotation;
         GlobePosition = Vector3.Slerp(GlobePosition, _moveTarget.GlobePosition, _acceleration);
 
-        if (saveOrientation)
-            transform.rotation = rotation;
+        if (move == new Vector2())
+        {
+            transform.rotation = lastRotation;
+            return;
+        }
+        Quaternion desiredRotation = Quaternion.LookRotation(direction, GlobeUp);
+        transform.rotation = Quaternion.RotateTowards(lastRotation, desiredRotation, _rotateSpeed);
     }
 
     public GlobeObject MoveTarget

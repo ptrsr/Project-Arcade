@@ -7,7 +7,8 @@ public class DestroyableObject : MonoBehaviour
     [SerializeField]
     private float
         _health,
-        _explosionSize;
+        _explosionSize,
+        _partForceMulti = 3;
 
     [SerializeField]
     private GameObject
@@ -52,7 +53,10 @@ public class DestroyableObject : MonoBehaviour
         GameObject destroyedObject;
 
         if (_destroyedPrefab != null)
+        {
             destroyedObject = Instantiate(_destroyedPrefab, transform.position, transform.rotation);
+            destroyedObject.transform.localScale = transform.lossyScale;
+        }
         else
             destroyedObject = gameObject;
 
@@ -65,13 +69,16 @@ public class DestroyableObject : MonoBehaviour
         {
             Part PartComp = part.AddComponent<Part>();
 
-            Vector3 force = (part.transform.position - transform.position).normalized * 10;
+            Vector3 force = (part.transform.position - transform.position).normalized * _partForceMulti;
             force.z = 0;
             PartComp.ExplodeForce = force;
         }
 
         ExplodeAnimation();
         DamageSurroundings();
+
+        if (_destroyedPrefab != null)
+            Destroy(gameObject);
 
         _exploded = true;
     }

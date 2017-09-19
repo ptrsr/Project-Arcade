@@ -26,7 +26,9 @@ public class GlobeObject : MonoBehaviour
 
     public void SetPosition(Vector3 ScenePosition)
     {
-        GlobePosition = Globe.SceneToGlobePosition(ScenePosition) - new Vector3(0, GlobeRadius + GlobePosition.y, 0);
+        Vector3 tempPosition = Globe.SceneToGlobePosition(ScenePosition);
+        tempPosition.y = GlobePosition.y;
+        GlobePosition = tempPosition;
     }
 
     protected virtual void OnValidate()

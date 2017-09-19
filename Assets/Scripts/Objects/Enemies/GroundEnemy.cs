@@ -57,7 +57,7 @@ public class GroundEnemy : MovingObject
 
         nextMove = CheckDistance(nextMove);
 
-        Move(nextMove, true);
+        Move(nextMove);
 
 
 

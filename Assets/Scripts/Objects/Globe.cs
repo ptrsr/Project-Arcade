@@ -11,7 +11,8 @@ public class Globe : MonoBehaviour
     private float
         _size = 10,
         _rotation = 0,
-        _gravityAcceleration = 10;
+        _gravityAcceleration = 10,
+        _levelWidth;
 
 
     private Globe()
@@ -62,6 +63,11 @@ public class Globe : MonoBehaviour
         get { return _gravityAcceleration; }
     }
 
+    public float LevelWidth
+    {
+        get { return _levelWidth; }
+    }
+
     public static Vector3 SceneToGlobePosition(Vector3 scenePosition, bool relative = false)
     {
         float radius = ServiceLocator.Locate<Globe>().Radius;
@@ -75,6 +81,6 @@ public class Globe : MonoBehaviour
 
     public static Vector3 GlobeToScenePosition(Vector3 globePosition)
     {
-        return new Vector3(Mathf.Sin(globePosition.x), Mathf.Cos(globePosition.x), 0) * globePosition.y;
+        return new Vector3(Mathf.Sin(globePosition.x) * Mathf.Cos(globePosition.z), Mathf.Cos(globePosition.x) * Mathf.Cos(globePosition.z), Mathf.Sin(globePosition.z)) * globePosition.y;
     }
 }

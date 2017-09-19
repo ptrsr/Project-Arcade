@@ -23,6 +23,8 @@ public class Beam : Weapon
         _attachmentPoint = transform.parent;
 
         _beamableObjects = new List<GravityObject>();
+
+        transform.localEulerAngles = new Vector3(90, 0, 0);
     }
 
     public override void Aim(Vector2 movement)
@@ -52,7 +54,6 @@ public class Beam : Weapon
 
     protected override void OnFireDisabled()
     {
-
         _mr.enabled = false;
 
         foreach (GravityObject gObject in _beamableObjects)
@@ -60,7 +61,7 @@ public class Beam : Weapon
             gObject.transform.parent = null;
             gObject.Gravity = true;
 
-            gObject.ApplyForce(new Vector3(_move.x, _move.y, 0));
+            gObject.ApplyForce(new Vector3(_move.x, 0, _move.y));
 
             GlobeObject globeComponent = gObject.GetComponent<GlobeObject>();
 
@@ -91,6 +92,12 @@ public class Beam : Weapon
 
         if (_beamableObjects.Contains(gObject))
             _beamableObjects.Remove(gObject);
+
+        if (gObject.transform.parent == transform)
+        {
+            gObject.transform.parent = null;
+            gObject.Gravity = true;
+        }
     }
 
     private void OnBeam(GravityObject gObject)

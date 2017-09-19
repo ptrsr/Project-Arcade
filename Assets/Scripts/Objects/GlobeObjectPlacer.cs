@@ -28,7 +28,7 @@ public class GlobeObjectPlacer : Editor
         Ray ray = cam.ScreenPointToRay(mousePosition);
         RaycastHit hit;
 
-        if (!Physics.Raycast(ray, out hit))
+        if (!Physics.Raycast(ray, out hit, 1 << 8))
             return;
 
         GlobeObject building = (GlobeObject)target;

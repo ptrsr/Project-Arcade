@@ -6,62 +6,71 @@ public class FollowCam : MonoBehaviour
 {
     [SerializeField]
     private float
-        _angle = 0.0f,
         _distance = 0.5f,
-        _forwardMulti = 0.5f;
+        _forwardMulti = 0.5f,
+        _hoverHeight;
 
     [SerializeField] [Range(0, 20)]
     private float
         _moveSpeed     = 0.9f,
         _rotateSpeed   = 0.9f;
 
+    [SerializeField]
+    private Vector2 _angle = new Vector2();
+
     private Vector3 _currentFocusPos;
 
-    private SpaceShip _ship;
+    private MovingObject _target;
 
 	void Start ()
     {
-        _ship = ServiceLocator.Locate<SpaceShip>();
+        _target = ServiceLocator.Locate<SpaceShip>();
 
-        _currentFocusPos = _ship.transform.position;
-        SetCameraTransform(_ship.transform);
+        _currentFocusPos = _target.transform.position;
+        SetCameraTransform(_target);
 	}
 	
 	void FixedUpdate ()
     {
-        Follow(_ship.transform, GetFocusPosition(_ship));
+        Follow(_target, GetFocusPosition(_target));
 	}
 
     private void OnValidate()
     {
         ServiceLocator.Provide(this);
 
-        SpaceShip ship = ServiceLocator.Locate<SpaceShip>();
+        SpaceShip target = ServiceLocator.Locate<SpaceShip>();
 
-        if (ship != null)
-            SetCameraTransform(ship.transform);
+        if (target != null)
+            SetCameraTransform(target);
     }
 
-    private void Follow(Transform HoverTarget, Vector3 focusPosition)
+    private void Follow(GlobeObject HoverTarget, Vector3 focusPosition)
     {
         transform.position = Vector3.Lerp(transform.position, HoverPosition(HoverTarget), Mathf.Min(_moveSpeed * Time.deltaTime, 1));
-        transform.rotation = Quaternion.LookRotation((focusPosition - transform.position).normalized, HoverTarget.up);
+        transform.rotation = Quaternion.LookRotation((focusPosition - transform.position).normalized, HoverTarget.transform.up);
     }
 
-    private Vector3 HoverPosition(Transform focusTarget)
+    private Vector3 HoverPosition(GlobeObject focusTarget)
     {
-        return focusTarget.TransformPoint(new Vector3(0, Mathf.Sin(_angle), Mathf.Cos(_angle)) * _distance);
+        Vector3 focusPos = focusTarget.GlobePosition;
+        focusPos.y = _hoverHeight;
+
+        focusPos = Globe.GlobeToScenePosition(focusPos);
+
+        Quaternion cameraRotation = Quaternion.LookRotation(Vector3.forward, focusTarget.GlobeUp);
+        return focusPos + cameraRotation * (new Vector3(Mathf.Sin(_angle.x), Mathf.Sin(_angle.y), Mathf.Cos(_angle.x)) * -_distance);
     }
 
-    public void SetCameraTransform(Transform focusTarget)
+    public void SetCameraTransform(GlobeObject focusTarget)
     {
         transform.position = HoverPosition(focusTarget);
-        transform.rotation = Quaternion.LookRotation((focusTarget.position - transform.position).normalized, focusTarget.up);
+        transform.rotation = Quaternion.LookRotation((focusTarget.WorldPosition - transform.position).normalized, focusTarget.transform.up);
     }
 
-    private Vector3 GetFocusPosition(SpaceShip ship)
+    private Vector3 GetFocusPosition(MovingObject target)
     {
-        Vector3 newFocusPos = ship.GlobePosition + new Vector3(0, ship.GlobeRadius, 0) +  (ship.GlobePosition - ship.MoveTarget.GlobePosition).normalized * _forwardMulti;
+        Vector3 newFocusPos = target.GlobePosition + new Vector3(0, target.GlobeRadius, 0) +  (target.GlobePosition - target.MoveTarget.GlobePosition).normalized * _forwardMulti;
         _currentFocusPos = Vector3.Slerp(_currentFocusPos, Globe.GlobeToScenePosition(newFocusPos), _rotateSpeed);
 
         return _currentFocusPos;

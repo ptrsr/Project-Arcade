@@ -97,16 +97,16 @@ public class SpaceShip : MovingObject
         Vector2 move = new Vector2();
 
         if (Input.GetKey(KeyCode.S))
-            move += new Vector2(0, -1);
-
-        if (Input.GetKey(KeyCode.W))
             move += new Vector2(0, 1);
 
+        if (Input.GetKey(KeyCode.W))
+            move += new Vector2(0, -1);
+
         if (Input.GetKey(KeyCode.A))
-            move += new Vector2(-1, 0);
+            move += new Vector2(1, 0);
 
         if (Input.GetKey(KeyCode.D))
-            move += new Vector2(1, 0);
+            move += new Vector2(-1, 0);
 
         return move;
     }
