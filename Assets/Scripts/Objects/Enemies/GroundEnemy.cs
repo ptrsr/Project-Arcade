@@ -8,7 +8,11 @@ public class GroundEnemy : MovingObject
     private float
         _range,
         _rotationSpeed,
-        _minimumDistance;
+        _minimumDistance,
+        _resetVelocity,
+        _resetHeight,
+        _rayForward,
+        _rayDistance;
 
     private Quaternion
         _rotation;
@@ -31,19 +35,32 @@ public class GroundEnemy : MovingObject
 	
 	void Update ()
     {
+        if (!Active)
+        {
+            if (!Beamed)
+                CheckIfUpright();
+
+            return;
+        }
+
         Quaternion desiredRotation = GetDesiredRotation(_target);
 
         Vector2 nextMove = new Vector2();
 
         _targetInRange = CheckInRange(_target);
 
-        if (_targetInRange && Quaternion.Angle(_rotation, desiredRotation) < 2)
+        if (Mathf.Abs(_target.GlobePosition.x - GlobePosition.x) > _minimumDistance && 
+            _targetInRange && Quaternion.Angle(_rotation, desiredRotation) < 2)
             nextMove = Movement(_target);
 
-        if (Mathf.Abs(_target.GlobePosition.x - GlobePosition.x) > _minimumDistance)
-            Move(nextMove);
-
         Rotate(desiredRotation);
+
+        nextMove = CheckDistance(nextMove);
+
+        Move(nextMove, true);
+
+
+
 
         if (_targetInRange && _turret != null)
             _turret.Aim(_target);
@@ -77,6 +94,40 @@ public class GroundEnemy : MovingObject
         Vector2 move = new Vector2();
         move.x = MoveTarget.GlobePosition.x < target.GlobePosition.x ? 1 : -1;
         return move;
+    }
+
+    public void CheckIfUpright()
+    {
+        Vector3 currentGlobePos = Globe.SceneToGlobePosition(transform.position, true);
+
+        if (Body.velocity.magnitude > _resetVelocity || currentGlobePos.y > _resetHeight)
+            return;
+
+        if (Vector3.Angle(transform.position.normalized, transform.up) < 10)
+        {
+            Active = true;
+            MoveTarget.GlobePosition = new Vector3(currentGlobePos.x, MoveTarget.GlobePosition.y, MoveTarget.GlobePosition.z);
+            return;
+        }
+
+        if (Vector3.Angle(transform.position.normalized, -transform.up) < 90)
+        {
+            DestroyableObject destroyableObject = GetComponent<DestroyableObject>();
+
+            if (destroyableObject != null)
+                destroyableObject.Explode();
+        }
+    }
+
+    private Vector2 CheckDistance(Vector2 nextMove)
+    {
+        Ray ray = new Ray(transform.position + transform.forward * _rayForward, transform.forward);
+        Debug.DrawRay(transform.position + _rotation * (Vector3.forward * _rayForward), transform.forward);
+
+        if (Physics.Raycast(ray, _rayDistance))
+            return new Vector2();
+
+        return nextMove;
     }
 
     public bool TargetInRange

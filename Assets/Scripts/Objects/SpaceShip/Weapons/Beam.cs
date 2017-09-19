@@ -27,28 +27,32 @@ public class Beam : Weapon
 
     public override void Aim(Vector2 movement)
     {
-        _move = -movement * 50;
+        _move = movement;
     }
 
     protected override void OnFire()
     {
         foreach (GravityObject gObject in _beamableObjects)
-        {
-            gObject.transform.parent = transform;
-            gObject.ApplyForce(new Vector3());
             gObject.transform.position += (transform.parent.position - gObject.transform.position).normalized * _beamSpeed;
-            gObject.Gravity = false;
-
-        }
     }
 
     protected override void OnFireEnabled()
     {
         _mr.enabled = true;
+
+        for (int i = _beamableObjects.Count - 1; i >= 0; i--)
+        {
+            if (_beamableObjects[i] == null)
+                _beamableObjects.RemoveAt(i);
+        }
+
+        foreach (GravityObject gObject in _beamableObjects)
+            OnBeam(gObject);
     }
 
     protected override void OnFireDisabled()
     {
+
         _mr.enabled = false;
 
         foreach (GravityObject gObject in _beamableObjects)
@@ -57,6 +61,11 @@ public class Beam : Weapon
             gObject.Gravity = true;
 
             gObject.ApplyForce(new Vector3(_move.x, _move.y, 0));
+
+            GlobeObject globeComponent = gObject.GetComponent<GlobeObject>();
+
+            if (globeComponent != null)
+                globeComponent.Beamed = false;
         }
     }
 
@@ -68,6 +77,9 @@ public class Beam : Weapon
             return;
 
         _beamableObjects.Add(gObject);
+
+        if (Firing)
+            OnBeam(gObject);
     }
 
     private void OnTriggerExit(Collider other)
@@ -79,7 +91,20 @@ public class Beam : Weapon
 
         if (_beamableObjects.Contains(gObject))
             _beamableObjects.Remove(gObject);
+    }
 
-        gObject.Gravity = true;
+    private void OnBeam(GravityObject gObject)
+    {
+        GlobeObject globeComponent = gObject.GetComponent<GlobeObject>();
+
+        if (globeComponent != null)
+        {
+            globeComponent.Active = false;
+            globeComponent.Beamed = true;
+        }
+
+        gObject.transform.parent = transform;
+        gObject.ApplyForce(new Vector3());
+        gObject.Gravity = false;
     }
 }

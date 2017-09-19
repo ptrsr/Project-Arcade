@@ -8,7 +8,8 @@ public class Laser : Weapon
     private float
         _maxAngle, // max angle for each side in degrees
         _rotateSpeed,
-        _diameter;
+        _diameter,
+        _dps;
 
     private float
         _currentAngle;
@@ -56,6 +57,11 @@ public class Laser : Weapon
             transform.position = (hit.point + transform.parent.position) / 2;
             transform.rotation = rotation;
             transform.localScale = new Vector3(_diameter, hit.distance / 2, _diameter);
+
+            DestroyableObject destroyableObject = hit.transform.gameObject.GetComponent<DestroyableObject>();
+
+            if (destroyableObject != null)
+                destroyableObject.Damage(_dps * Time.deltaTime);
         }
     }
 }

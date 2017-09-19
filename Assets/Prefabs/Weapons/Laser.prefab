@@ -95,7 +95,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _maxAngle: 40
   _rotateSpeed: 1
-  _diameter: 0.1
+  _diameter: 0.46
+  _dps: 3
 --- !u!136 &136123895553484140
 CapsuleCollider:
   m_ObjectHideFlags: 1
