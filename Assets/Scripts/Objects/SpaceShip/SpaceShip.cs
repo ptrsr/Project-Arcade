@@ -8,8 +8,13 @@ public class SpaceShip : MovingObject
     private Transform _weaponAttachment;
 
     [SerializeField]
-    private GameObject _weaponPrefab;
-    private Weapon _weapon;
+    private GameObject[] _weaponPrefabs;
+
+    [SerializeField]
+    private GameObject _currentWeapon;
+    private Weapon _weaponComponent;
+
+    int _weaponSelector = 0;
 
     private SpaceShip()
     {
@@ -19,6 +24,12 @@ public class SpaceShip : MovingObject
     protected override void Start()
     {
         base.Start();
+        SelectWeapon(0);
+    }
+
+    private void Update()
+    {
+        SelectWeapon();
     }
 
     void FixedUpdate ()
@@ -26,15 +37,41 @@ public class SpaceShip : MovingObject
         Vector2 nextMove = Movement();
         Move(nextMove);
 
-        if (_weapon != null)
+        if (_weaponComponent != null)
         {
-            _weapon.Aim(nextMove);
+            _weaponComponent.Aim(new Vector2(nextMove.x * MovementSpeed.x, nextMove.y * MovementSpeed.y));
 
             if (Input.GetKey(KeyCode.Space))
-                _weapon.Fire();
+                _weaponComponent.Fire();
             else
-                _weapon.Hold();
+                _weaponComponent.Hold();
         }
+    }
+
+    private void SelectWeapon(int weapon = -1)
+    {
+        if (weapon >= 0 && weapon < _weaponPrefabs.Length)
+        {
+            SetWeapon(_weaponPrefabs[weapon]);
+            _weaponSelector = weapon;
+            return;
+        }
+
+        int temp = _weaponSelector;
+
+        if (Input.GetKeyDown(KeyCode.Q))
+            _weaponSelector--;
+
+        if (Input.GetKeyDown(KeyCode.E))
+            _weaponSelector++;
+
+        if (_weaponSelector < 0)
+            _weaponSelector += _weaponPrefabs.Length;
+
+        _weaponSelector %= _weaponPrefabs.Length;
+
+        if (temp != _weaponSelector)
+            SetWeapon(_weaponPrefabs[_weaponSelector]);
     }
 
     public void SetWeapon(GameObject prefab)
@@ -42,14 +79,14 @@ public class SpaceShip : MovingObject
         if (!Application.isPlaying)
             return;
 
-        if (_weapon != null)
-            Destroy(_weapon.gameObject);
+        if (_weaponComponent != null)
+            Destroy(_weaponComponent.gameObject);
 
         if (prefab == null || prefab.GetComponent<Weapon>() == null)
             return;
 
-        GameObject newPrefab = GameObject.Instantiate(_weaponPrefab);
-        _weapon = newPrefab.GetComponent<Weapon>();
+        GameObject newPrefab = GameObject.Instantiate(prefab);
+        _weaponComponent = newPrefab.GetComponent<Weapon>();
 
         newPrefab.transform.parent = _weaponAttachment;
         newPrefab.transform.localPosition = new Vector3();
@@ -60,16 +97,16 @@ public class SpaceShip : MovingObject
         Vector2 move = new Vector2();
 
         if (Input.GetKey(KeyCode.S))
-            move += new Vector2(0, -1);
-
-        if (Input.GetKey(KeyCode.W))
             move += new Vector2(0, 1);
 
+        if (Input.GetKey(KeyCode.W))
+            move += new Vector2(0, -1);
+
         if (Input.GetKey(KeyCode.A))
-            move += new Vector2(-1, 0);
+            move += new Vector2(1, 0);
 
         if (Input.GetKey(KeyCode.D))
-            move += new Vector2(1, 0);
+            move += new Vector2(-1, 0);
 
         return move;
     }
@@ -77,6 +114,6 @@ public class SpaceShip : MovingObject
     protected override void OnValidate()
     {
         base.OnValidate();
-        SetWeapon(_weaponPrefab);
+        SetWeapon(_currentWeapon);
     }
 }

@@ -1,0 +1,170 @@
+fileFormatVersion: 2
+guid: dc2102c666026e84c9adac16867e9c94
+timeCreated: 1505480932
+licenseType: Free
+ModelImporter:
+  serializedVersion: 21
+  fileIDToRecycleName:
+    100000: Generic_house_part_1
+    100002: Generic_house_part_10
+    100004: Generic_house_part_11
+    100006: Generic_house_part_12
+    100008: Generic_house_part_13
+    100010: Generic_house_part_14
+    100012: Generic_house_part_15
+    100014: Generic_house_part_16
+    100016: Generic_house_part_17
+    100018: Generic_house_part_2
+    100020: Generic_house_part_3
+    100022: Generic_house_part_4
+    100024: Generic_house_part_5
+    100026: Generic_house_part_6
+    100028: Generic_house_part_7
+    100030: Generic_house_part_8
+    100032: Generic_house_part_9
+    100034: //RootNode
+    400000: Generic_house_part_1
+    400002: Generic_house_part_10
+    400004: Generic_house_part_11
+    400006: Generic_house_part_12
+    400008: Generic_house_part_13
+    400010: Generic_house_part_14
+    400012: Generic_house_part_15
+    400014: Generic_house_part_16
+    400016: Generic_house_part_17
+    400018: Generic_house_part_2
+    400020: Generic_house_part_3
+    400022: Generic_house_part_4
+    400024: Generic_house_part_5
+    400026: Generic_house_part_6
+    400028: Generic_house_part_7
+    400030: Generic_house_part_8
+    400032: Generic_house_part_9
+    400034: //RootNode
+    2300000: Generic_house_part_1
+    2300002: Generic_house_part_10
+    2300004: Generic_house_part_11
+    2300006: Generic_house_part_12
+    2300008: Generic_house_part_13
+    2300010: Generic_house_part_14
+    2300012: Generic_house_part_15
+    2300014: Generic_house_part_16
+    2300016: Generic_house_part_17
+    2300018: Generic_house_part_2
+    2300020: Generic_house_part_3
+    2300022: Generic_house_part_4
+    2300024: Generic_house_part_5
+    2300026: Generic_house_part_6
+    2300028: Generic_house_part_7
+    2300030: Generic_house_part_8
+    2300032: Generic_house_part_9
+    3300000: Generic_house_part_1
+    3300002: Generic_house_part_10
+    3300004: Generic_house_part_11
+    3300006: Generic_house_part_12
+    3300008: Generic_house_part_13
+    3300010: Generic_house_part_14
+    3300012: Generic_house_part_15
+    3300014: Generic_house_part_16
+    3300016: Generic_house_part_17
+    3300018: Generic_house_part_2
+    3300020: Generic_house_part_3
+    3300022: Generic_house_part_4
+    3300024: Generic_house_part_5
+    3300026: Generic_house_part_6
+    3300028: Generic_house_part_7
+    3300030: Generic_house_part_8
+    3300032: Generic_house_part_9
+    4300000: Generic_house_part_1
+    4300002: Generic_house_part_2
+    4300004: Generic_house_part_3
+    4300006: Generic_house_part_4
+    4300008: Generic_house_part_5
+    4300010: Generic_house_part_6
+    4300012: Generic_house_part_7
+    4300014: Generic_house_part_8
+    4300016: Generic_house_part_9
+    4300018: Generic_house_part_10
+    4300020: Generic_house_part_11
+    4300022: Generic_house_part_12
+    4300024: Generic_house_part_13
+    4300026: Generic_house_part_14
+    4300028: Generic_house_part_15
+    4300030: Generic_house_part_16
+    4300032: Generic_house_part_17
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

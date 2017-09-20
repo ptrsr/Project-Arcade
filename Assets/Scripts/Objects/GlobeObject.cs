@@ -10,7 +10,9 @@ public class GlobeObject : MonoBehaviour
     private Vector3 _globePosition;
 
     [SerializeField]
-    private bool _active = true;
+    protected bool _active = true;
+
+    private bool _beamed = false;
 
     public GlobeObject()
     {
@@ -24,7 +26,9 @@ public class GlobeObject : MonoBehaviour
 
     public void SetPosition(Vector3 ScenePosition)
     {
-        GlobePosition = Globe.SceneToGlobePosition(ScenePosition) - new Vector3(0, GlobeRadius + GlobePosition.y, 0);
+        Vector3 tempPosition = Globe.SceneToGlobePosition(ScenePosition);
+        tempPosition.y = GlobePosition.y;
+        GlobePosition = tempPosition;
     }
 
     protected virtual void OnValidate()
@@ -42,8 +46,11 @@ public class GlobeObject : MonoBehaviour
             if (!_active)
                 return;
 
-            transform.position = new Vector3(Mathf.Sin(_globePosition.x) * Mathf.Cos(_globePosition.z), (Mathf.Cos(_globePosition.x) * Mathf.Cos(_globePosition.z)), Mathf.Sin(_globePosition.z)) * (Globe.Radius + _globePosition.y);
-            transform.up = GlobeUp;
+            try
+            {
+                transform.position = new Vector3(Mathf.Sin(_globePosition.x) * Mathf.Cos(_globePosition.z), (Mathf.Cos(_globePosition.x) * Mathf.Cos(_globePosition.z)), Mathf.Sin(_globePosition.z)) * (Globe.Radius + _globePosition.y);
+                transform.up = GlobeUp;
+            } catch { }
         }
     }
 
@@ -68,7 +75,13 @@ public class GlobeObject : MonoBehaviour
         }
     }
 
-    public bool Active
+    public bool Beamed
+    {
+        get { return _beamed;  }
+        set { _beamed = value; }
+    }
+
+    public virtual bool Active
     {
         get { return _active;  }
         set { _active = value; }

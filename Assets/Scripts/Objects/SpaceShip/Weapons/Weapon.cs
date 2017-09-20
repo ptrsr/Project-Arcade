@@ -30,8 +30,8 @@ public abstract class Weapon : MonoBehaviour
 
     public virtual void Aim(Vector2 movement) { }
 
-    //simple rotation if needed later
-
-    //Quaternion desired = Quaternion.LookRotation((aimPos2D - weaponPos).normalized);
-    //transform.rotation = Quaternion.RotateTowards(transform.rotation, desired, _rotateSpeed);
+    protected bool Firing
+    {
+        get { return _firing; }
+    }
 }

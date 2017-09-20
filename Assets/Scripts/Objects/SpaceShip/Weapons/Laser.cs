@@ -8,9 +8,10 @@ public class Laser : Weapon
     private float
         _maxAngle, // max angle for each side in degrees
         _rotateSpeed,
-        _diameter;
+        _diameter,
+        _dps;
 
-    private float
+    private Vector2
         _currentAngle;
 
     private MeshRenderer _mr;
@@ -28,8 +29,9 @@ public class Laser : Weapon
 
     public override void Aim(Vector2 movement)
     {
-        float desiredAngle = movement.x * _maxAngle;
-        _currentAngle = Mathf.MoveTowards(_currentAngle, desiredAngle, _rotateSpeed);
+        Vector2 desiredAngle = movement * _maxAngle;
+        _currentAngle = new Vector2(Mathf.MoveTowards(_currentAngle.x, desiredAngle.x, _rotateSpeed), Mathf.MoveTowards(_currentAngle.y, desiredAngle.y, _rotateSpeed));
+
     }
 
     protected override void OnFireEnabled()
@@ -45,7 +47,7 @@ public class Laser : Weapon
     protected override void OnFire()
     {
         Quaternion rotation = new Quaternion();
-        rotation.eulerAngles = new Vector3(0, 0, _currentAngle);
+        rotation.eulerAngles = new Vector3(-_currentAngle.y, 0, _currentAngle.x);
         rotation *= transform.parent.rotation;
 
         Ray ray = new Ray(transform.parent.position, rotation * Vector3.down);
@@ -55,7 +57,12 @@ public class Laser : Weapon
         {
             transform.position = (hit.point + transform.parent.position) / 2;
             transform.rotation = rotation;
-            transform.localScale = new Vector3(_diameter, hit.distance / 2, _diameter);
+            transform.localScale = new Vector3(_diameter, hit.distance / 1.5f, _diameter);
+
+            DestroyableObject destroyableObject = hit.transform.gameObject.GetComponent<DestroyableObject>();
+
+            if (destroyableObject != null)
+                destroyableObject.Damage(_dps * Time.deltaTime);
         }
     }
 }

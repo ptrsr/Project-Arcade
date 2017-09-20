@@ -11,7 +11,8 @@ public class Globe : MonoBehaviour
     private float
         _size = 10,
         _rotation = 0,
-        _gravityAcceleration = 10;
+        _gravityAcceleration = 10,
+        _levelWidth;
 
 
     private Globe()
@@ -62,13 +63,24 @@ public class Globe : MonoBehaviour
         get { return _gravityAcceleration; }
     }
 
-    public static Vector3 SceneToGlobePosition(Vector3 scenePosition)
+    public float LevelWidth
     {
-        return new Vector3(Mathf.Atan2(scenePosition.x, scenePosition.y), scenePosition.magnitude, Mathf.Sin(scenePosition.z / ServiceLocator.Locate<Globe>().Radius));
+        get { return _levelWidth; }
+    }
+
+    public static Vector3 SceneToGlobePosition(Vector3 scenePosition, bool relative = false)
+    {
+        float radius = ServiceLocator.Locate<Globe>().Radius;
+        Vector3 globePosition = new Vector3(Mathf.Atan2(scenePosition.x, scenePosition.y), scenePosition.magnitude, Mathf.Sin(scenePosition.z / radius));
+
+        if (relative)
+            globePosition.y -= radius;
+
+        return globePosition;
     }
 
     public static Vector3 GlobeToScenePosition(Vector3 globePosition)
     {
-        return new Vector3(Mathf.Sin(globePosition.x), Mathf.Cos(globePosition.x), 0) * globePosition.y;
+        return new Vector3(Mathf.Sin(globePosition.x) * Mathf.Cos(globePosition.z), Mathf.Cos(globePosition.x) * Mathf.Cos(globePosition.z), Mathf.Sin(globePosition.z)) * globePosition.y;
     }
 }
