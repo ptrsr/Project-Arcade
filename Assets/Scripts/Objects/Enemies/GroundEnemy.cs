@@ -10,6 +10,8 @@ public class GroundEnemy : MovingObject
         _rotationSpeed,
         _minimumDistance;
 
+    private Renderer rend;
+
     private Quaternion
         _rotation;
 
@@ -25,6 +27,7 @@ public class GroundEnemy : MovingObject
         base.Start();
         _rotation = new Quaternion();
         _target = ServiceLocator.Locate<SpaceShip>();
+        rend = GetComponent<Renderer>();
 
         _turret.Parent = this;
 	}
