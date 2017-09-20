@@ -8,7 +8,8 @@ public class FollowCam : MonoBehaviour
     private float
         _distance = 0.5f,
         _forwardMulti = 0.5f,
-        _hoverHeight;
+        _hoverHeight,
+        _focusHeight;
 
     [SerializeField] [Range(0, 20)]
     private float
@@ -70,7 +71,13 @@ public class FollowCam : MonoBehaviour
 
     private Vector3 GetFocusPosition(MovingObject target)
     {
-        Vector3 newFocusPos = target.GlobePosition + new Vector3(0, target.GlobeRadius, 0) +  (target.GlobePosition - target.MoveTarget.GlobePosition).normalized * _forwardMulti;
+        Vector3 focusGlobePos = target.GlobePosition;
+        focusGlobePos.y = target.GlobeRadius + _focusHeight;
+
+        Vector3 focusTargetPos = target.MoveTarget.GlobePosition;
+        focusGlobePos.y = target.GlobeRadius + _focusHeight;
+
+        Vector3 newFocusPos = focusGlobePos +  (focusGlobePos - focusTargetPos).normalized * _forwardMulti;
         _currentFocusPos = Vector3.Slerp(_currentFocusPos, Globe.GlobeToScenePosition(newFocusPos), _rotateSpeed);
 
         return _currentFocusPos;

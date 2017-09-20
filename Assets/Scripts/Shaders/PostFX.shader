@@ -60,7 +60,7 @@ Shader "custom/post_fx"
 				float linearDepth;
 				float3 viewNormal;
 
-				linearDepth = 1 - tex2D(_CameraDepthTexture, i.uv);
+				linearDepth = Linear01Depth(tex2D(_CameraDepthTexture, i.uv));
 
 				// fragments world position
 				float3 worldPos = worldPosition (linearDepth, i.ray);

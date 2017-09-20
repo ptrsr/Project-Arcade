@@ -57,7 +57,7 @@ public class Laser : Weapon
         {
             transform.position = (hit.point + transform.parent.position) / 2;
             transform.rotation = rotation;
-            transform.localScale = new Vector3(_diameter, hit.distance / 2, _diameter);
+            transform.localScale = new Vector3(_diameter, hit.distance / 1.5f, _diameter);
 
             DestroyableObject destroyableObject = hit.transform.gameObject.GetComponent<DestroyableObject>();
 

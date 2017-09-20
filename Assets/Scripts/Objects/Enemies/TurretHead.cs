@@ -22,7 +22,9 @@ public class TurretHead : MonoBehaviour
     private GameObject _projectilePrefab;
 
     [SerializeField]
-    private float _reloadSpeed;
+    private float
+        _reloadSpeed,
+        _shootAngle = 5;
 
     private float _reloadTime;
 
@@ -47,7 +49,7 @@ public class TurretHead : MonoBehaviour
         // shooting
         _reloadTime = Mathf.Clamp(_reloadTime - Time.deltaTime, 0, _reloadSpeed);
 
-        if (Quaternion.Angle(_barrel.rotation, desiredBarrelRotation) < 2 && _reloadTime == 0)
+        if (Quaternion.Angle(_barrel.rotation, desiredBarrelRotation) < _shootAngle && _reloadTime == 0)
         {
             _reloadTime = _reloadSpeed;
 

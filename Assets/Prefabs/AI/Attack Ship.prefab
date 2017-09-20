@@ -655,6 +655,7 @@ MonoBehaviour:
   _projectilePrefab: {fileID: 1759946015971640, guid: 98cc973f071cd5748b31abfe7c29853d,
     type: 2}
   _reloadSpeed: 3
+  _shootAngle: 5
 --- !u!114 &114601823657735528
 MonoBehaviour:
   m_ObjectHideFlags: 1

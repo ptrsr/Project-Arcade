@@ -50,16 +50,31 @@ public class PostFX : MonoBehaviour
     {
         // Compute Frustum Corners
         float camFar = _cam.farClipPlane;
+        float camFov = _cam.fieldOfView;
         float camAspect = _cam.aspect;
-        float camSize = _cam.orthographicSize;
 
-        Vector3 toRight = _cam.transform.right * camSize * camAspect;
-        Vector3 toTop = _cam.transform.up * camSize;
+        float fovWHalf = camFov * 0.5f;
 
-        Vector3 topLeft = _cam.transform.forward * camFar - toRight + toTop;
-        Vector3 topRight = _cam.transform.forward * camFar + toRight + toTop;
-        Vector3 bottomRight = _cam.transform.forward * camFar + toRight - toTop;
-        Vector3 bottomLeft = _cam.transform.forward * camFar - toRight - toTop;
+        Vector3 toRight = _cam.transform.right * Mathf.Tan(fovWHalf * Mathf.Deg2Rad) * camAspect;
+        Vector3 toTop = _cam.transform.up * Mathf.Tan(fovWHalf * Mathf.Deg2Rad);
+
+        Vector3 topLeft = (_cam.transform.forward - toRight + toTop);
+        float camScale = topLeft.magnitude * camFar;
+
+        topLeft.Normalize();
+        topLeft *= camScale;
+
+        Vector3 topRight = (_cam.transform.forward + toRight + toTop);
+        topRight.Normalize();
+        topRight *= camScale;
+
+        Vector3 bottomRight = (_cam.transform.forward + toRight - toTop);
+        bottomRight.Normalize();
+        bottomRight *= camScale;
+
+        Vector3 bottomLeft = (_cam.transform.forward - toRight - toTop);
+        bottomLeft.Normalize();
+        bottomLeft *= camScale;
 
         // Custom Blit, encoding Frustum Corners as additional Texture Coordinates
         RenderTexture.active = dest;
