@@ -5,128 +5,161 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Collections.Specialized;
 using System.Linq;
+using UnityEngine.SceneManagement;
 using UnityEngine;
 
 public class HighscoresScript : MonoBehaviour {
 
     public static HighscoresScript highscores;
 
-    HighscoreContainer container = new HighscoreContainer();
+    HighscoreContainer container;
 
-    private string testThis;
-
-    PlayerData testPlayerOne = new PlayerData();
-    PlayerData testPlayerTwo = new PlayerData();
-    PlayerData testPlayerThree = new PlayerData();
-    PlayerData testPlayerFour = new PlayerData();
-    PlayerData testPlayerFive = new PlayerData();
+    PlayerData zero = new PlayerData();
 
     private void Awake()
     {
-        if (highscores == null)
-        {
-            DontDestroyOnLoad(gameObject);
-            highscores = this;
-        }
-        else if (highscores != this)
-        {
-            Destroy(gameObject);
-        }
-
-        testPlayerOne.playerName = "VochtigeMiem";
-        testPlayerOne.playerScore = 420;
-        testPlayerTwo.playerName = "DankeMemmesboi";
-        testPlayerTwo.playerScore = 890;
-        testPlayerThree.playerName = "IvanIsBlackSheep";
-        testPlayerThree.playerScore = 10;
-        testPlayerFour.playerName = "EtienneIsGod";
-        testPlayerFour.playerScore = 9999;
-        testPlayerFive.playerName = "RuudSenpai";
-        testPlayerFive.playerScore = 666;
-
-        container.highscoreListData.Add(testPlayerOne);
-        container.highscoreListData.Add(testPlayerTwo);
-        container.highscoreListData.Add(testPlayerThree);
-        container.highscoreListData.Add(testPlayerFour);
-        container.highscoreListData.Add(testPlayerFive);
+        CreateHighscore();
+        CreateContainer();
+        LoadAndSort();
     }
 
-    public void AddPlayerHighscore()
+    public static void ReturnDataByID(int pID, out int pScore, out string pName)
+    {
+        if (pID == 0 || pID == 1)
+        {
+            highscores.LoadAndSort();
+        }
+        var containerSize = highscores.container.highscoreListData.Count;
+        if (containerSize < pID || containerSize == 0)
+        {
+            pScore = 000000;
+            pName = "NULL";
+        }
+        else
+        {
+            pScore = highscores.container.highscoreListData[pID].playerScore;
+            pName = highscores.container.highscoreListData[pID].playerName;
+        }
+    }
+
+    public void CreateContainer()
+    {
+        if (highscores.container == null)
+        {
+            highscores.container = new HighscoreContainer();
+            container = highscores.container;
+        }
+        else
+        {
+            container = highscores.container;
+        }
+    }
+
+    public static void CreateHighscore()
+    {
+        if (HighscoresScript.highscores == null)
+        {
+            highscores = new HighscoresScript();
+            DontDestroyOnLoad(highscores);
+        }
+        else
+        {
+            highscores = HighscoresScript.highscores;
+        }
+    }
+
+    public static void AddPlayerHighscore(string pName, int pScore)
     {
         PlayerData thisNewPlayer = new PlayerData();
-        thisNewPlayer.playerName = "";
-        thisNewPlayer.playerScore = 0;
-        container.highscoreListData.Add(thisNewPlayer);
+        thisNewPlayer.playerName = pName;
+        thisNewPlayer.playerScore = pScore;
+        highscores.container.highscoreListData.Add(thisNewPlayer);
+        highscores.Save();
+        highscores.LoadAndSort();
     }
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.L))
-        {
-            Save();
-            LoadAndSort();
-        }
-    }
-
-    private void LoadAndSort()
+    public void LoadAndSort()
     {
         Load();
         Sort();
-
-        testThis = "";
-
-        foreach(PlayerData player in container.highscoreListData)
-        {
-            testThis += player.playerName + " " + player.playerScore + " ";
-        }
-
-        Debug.Log(testThis);
     }
 
-    private void Save()
+    private void ClearHighscoreList()
+    {
+        if (File.Exists(Application.persistentDataPath + "/highscoreData.dat"))
+        {
+            string filepath = Application.persistentDataPath + "/highscoreData.dat";
+            File.Delete(filepath);
+            FileStream file = File.Create(Application.persistentDataPath + "/highscoreData.dat");
+        }
+    }
+
+    public void Save()
     {
         BinaryFormatter bf = new BinaryFormatter();
 
-        if (!File.Exists(Application.persistentDataPath + "/highscoreinfo.dat"))
+        if (!File.Exists(Application.persistentDataPath + "/highscoreData.dat"))
         {
-            FileStream file = File.Create(Application.persistentDataPath + "/highscoreInfo.dat");
-            bf.Serialize(file, container);
+            FileStream file = File.Create(Application.persistentDataPath + "/highscoreData.dat");
+            bf.Serialize(file, highscores.container);
             file.Close();
         }
         else
         {
-            FileStream file = File.Open(Application.persistentDataPath + "/highscoreInfo.dat", FileMode.Open);
-            bf.Serialize(file, container);
+
+            FileStream file = File.Open(Application.persistentDataPath + "/highscoreData.dat", FileMode.Open);
+            bf.Serialize(file, highscores.container);
             file.Close();
         }
-
-
     }
 
     private void Load()
     { 
-        if (File.Exists(Application.persistentDataPath + "/highscoreInfo.dat"))
+        if (File.Exists(Application.persistentDataPath + "/highscoreData.dat"))
         {
+            HighscoreContainer data = new HighscoreContainer();
             BinaryFormatter bf = new BinaryFormatter();
-            FileStream file = File.Open(Application.persistentDataPath + "/highscoreinfo.dat", FileMode.Open);
-
-            HighscoreContainer data = (HighscoreContainer)bf.Deserialize(file);
+            FileStream file = File.Open(Application.persistentDataPath + "/highscoreData.dat", FileMode.Open);
+            data = (HighscoreContainer)bf.Deserialize(file);
             file.Close();
 
             container.highscoreListData = data.highscoreListData;
+
+        }
+        else
+        {
+            BinaryFormatter bf = new BinaryFormatter();
+
+            FileStream file = File.Create(Application.persistentDataPath + "/highscoreData.dat");
+
+            PlayerData easter = new PlayerData();
+            easter.playerName = "GOD";
+            easter.playerScore = 10000;
+            highscores.container.highscoreListData.Add(easter);
+            bf.Serialize(file, highscores.container);
+            file.Close();
         }
     }
 
     private void Sort()
     {
-        container.highscoreListData.Sort
+        if (File.Exists(Application.persistentDataPath + "/highscoreData.dat"))
+        {
+            container.highscoreListData.Sort
             (
                 delegate (PlayerData firstPair,
                 PlayerData secondPair)
                 {
-                return secondPair.playerScore.CompareTo(firstPair.playerScore);
+                    return secondPair.playerScore.CompareTo(firstPair.playerScore);
                 }
             );
+        }
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.I))
+        SceneManager.LoadScene("Main-Menu");
     }
 
     [Serializable]

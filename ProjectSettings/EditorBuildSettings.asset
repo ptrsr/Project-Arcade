@@ -17,3 +17,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Controls.unity
     guid: ce66a3e72b811b44da214096bf010c1c
+  - enabled: 1
+    path: Assets/Scenes/Scene-Etienne2.unity
+    guid: 06290962ea718bf49941ab7f5c19dbee
