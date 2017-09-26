@@ -1,81 +1,77 @@
-// Upgrade NOTE: commented out 'half4 unity_LightmapST', a built-in variable
-
-// Upgrade NOTE: replaced tex2D unity_Lightmap with UNITY_SAMPLE_TEX2D
-
-// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
-
-Shader "custom/globe_fx"
+Shader "custom/globeFX"
 {
+	 CGINCLUDE
+		 #include "UnityCG.cginc"
+		 #include "AutoLight.cginc"
+		 #include "Lighting.cginc"
+	 ENDCG
+ 
 	SubShader
 	{
-		Tags{ "RenderType" = "Opaque" }
-		Pass
-		{
-			ZWrite On Lighting On
-			Tags{ "LightMode" = "ForwardBase" }
-
+		LOD 200
+		Tags { "RenderType"="Opaque" }
+		
+		Pass 
+		{ 
+			Lighting On
+			Tags {"LightMode" = "ForwardBase"}
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
-			
-			#include "UnityCG.cginc"
-			#include "AutoLight.cginc"
-			#include "Lighting.cginc"
-
-#pragma multi_compile LIGHTMAP_ON LIGHTMAP_OFF
-#ifdef LIGHTMAP_ON
-		// half4 unity_LightmapST;
-	sampler2D_half unity_Lightmap;
-#endif
-
-
+			#pragma multi_compile_fwdbase
+ 
+			uniform half4        _Color;
+ 
 			struct appdata
 			{
-				float4 vertex : POSITION;
-				float3 normal : NORMAL;
-				float4 uv	  : TEXCOORD0;
-			};
+				half4	vertex	:	POSITION;
+				half3	normal	:	NORMAL;
+				float4	uv		:	TEXCOORD0;
 
+			};
+             
 			struct v2f
 			{
-				float4 vertex		  : SV_POSITION;
-				float3 normal		  : NORMAL;
-				float2 uv			  : TEXCOORD0;
-				float3 view			  : TEXCOORD1;
-				float3 lightDirection : TEXCOORD2;
+				half4	pos				:	SV_POSITION;
+				float4	uv				:	TEXCOORD0;
 
-				LIGHTING_COORDS(4, 6)
+				fixed4	lightDirection	:	TEXCOORD1;
+				fixed3	viewDirection	:	TEXCOORD2;
+				fixed3	normalWorld		:	TEXCOORD3;
+				LIGHTING_COORDS(4,6)
 			};
-
-
-
+ 
 			uniform sampler2D _splatmap;
 
 			v2f vert (appdata v)
 			{
 				v2f o;
+                 
+				half4 posWorld = mul( unity_ObjectToWorld, v.vertex );
+				o.normalWorld = normalize( mul(half4(v.normal, 0.0), unity_WorldToObject).xyz );
+				o.viewDirection = normalize(_WorldSpaceCameraPos.xyz - posWorld.xyz);
 
-				o.normal = v.normal;
-				o.uv = v.uv;
 
-				float height = 1;// +tex2Dlod(_splatmap, float4(o.uv, 0, 0)).a / 40;
-				o.vertex = UnityObjectToClipPos(v.vertex * height);
-
-				half4 worldPos = mul(unity_ObjectToWorld, v.vertex);
-				o.view = normalize(_WorldSpaceCameraPos.xyz - worldPos.xyz);
+				float height = 1 + tex2Dlod(_splatmap, v.uv) / 50;
+				o.pos = UnityObjectToClipPos(v.vertex * height);
+				o.uv = v.uv;             
 
 				TRANSFER_VERTEX_TO_FRAGMENT(o);
-
+                 
 				return o;
 			}
-
-			fixed4 frag (v2f i) : SV_Target
+             
+			half4 frag (v2f i) : COLOR
 			{
-				return 1 * (DecodeLightmap(UNITY_SAMPLE_TEX2D(unity_Lightmap, i.uv[1]))) * 2;
+				fixed NdotL = dot(i.normalWorld, i.lightDirection);
+				half atten = LIGHT_ATTENUATION(i);
+				fixed3 diffuseReflection = _LightColor0.rgb * atten * float3(1,1,1);
+				fixed3 finalColor = UNITY_LIGHTMODEL_AMBIENT.xyz + diffuseReflection;
+                 
+				return float4(finalColor, 1.0);
 			}
-
 			ENDCG
 		}
 	}
-	FallBack "VertexLit"
+	FallBack "Diffuse"
 }

@@ -24,7 +24,7 @@ GameObject:
   - component: {fileID: 95972087934195638}
   - component: {fileID: 114204784303865412}
   m_Layer: 0
-  m_Name: Barracks
+  m_Name: ufo1obj
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -110,7 +110,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2be749cf409eee4a94f65e2c914d131, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _globePosition: {x: 0.26648256, y: 0.000022888184, z: 0.042485587}
-  _active: 1
-  destroyedPrefab: {fileID: 1789949431852732, guid: efa436d38287146478fb81437da30bc8,
-    type: 2}
+  _health: 0
+  _explosionSize: 0
+  _partForceMulti: 3
+  _destroyedPrefab: {fileID: 0}
+  _explosion: {fileID: 0}
+  _removedBehaviours: []
