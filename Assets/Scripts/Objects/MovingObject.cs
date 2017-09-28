@@ -27,25 +27,18 @@ public class MovingObject : GlobeObject
 	
     protected void Move(Vector2 move)
     {
-        if (!Active)
+        if (!Active || move == new Vector2())
             return;
 
         float moveScalar = GlobeRadius + GlobePosition.y; // so the object speed doesn't change with altitude
 
-        Vector3 direction = Globe.GlobeToScenePosition(_moveTarget.GlobePosition);
         _moveTarget.GlobePosition += new Vector3((move.x * _movementSpeed.x) / moveScalar, 0, (move.y * _movementSpeed.y) / moveScalar) * Time.deltaTime;
-        direction = (Globe.GlobeToScenePosition(_moveTarget.GlobePosition) - direction).normalized;
 
         Quaternion lastRotation = transform.rotation;
         GlobePosition = Vector3.Slerp(GlobePosition, _moveTarget.GlobePosition, _acceleration);
 
-        if (move == new Vector2())
-        {
-            transform.rotation = lastRotation;
-            return;
-        }
-        Quaternion desiredRotation = Quaternion.LookRotation(direction, GlobeUp);
-        transform.rotation = Quaternion.RotateTowards(lastRotation, desiredRotation, _rotateSpeed);
+
+        transform.rotation *=  Quaternion.LookRotation((_moveTarget.GlobePosition - GlobePosition).normalized);
     }
 
     public GlobeObject MoveTarget
