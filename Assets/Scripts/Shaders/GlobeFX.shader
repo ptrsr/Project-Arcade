@@ -8,8 +8,7 @@ Shader "custom/globeFX"
  
 	SubShader
 	{
-		LOD 200
-		Tags { "RenderType"="Opaque" }
+		Tags { "RenderType"="Opaque" "Queue" = "Geometry" }
 		
 		Pass 
 		{ 
@@ -35,9 +34,8 @@ Shader "custom/globeFX"
 				half4	pos				:	SV_POSITION;
 				float4	uv				:	TEXCOORD0;
 
-				fixed4	lightDirection	:	TEXCOORD1;
-				fixed3	viewDirection	:	TEXCOORD2;
-				fixed3	normalWorld		:	TEXCOORD3;
+				fixed3	viewDirection	:	TEXCOORD1;
+				fixed3	normalWorld		:	TEXCOORD2;
 				LIGHTING_COORDS(4,6)
 			};
  
@@ -51,9 +49,7 @@ Shader "custom/globeFX"
 				o.normalWorld = normalize( mul(half4(v.normal, 0.0), unity_WorldToObject).xyz );
 				o.viewDirection = normalize(_WorldSpaceCameraPos.xyz - posWorld.xyz);
 
-
-				float height = 1 + tex2Dlod(_splatmap, v.uv) / 50;
-				o.pos = UnityObjectToClipPos(v.vertex * height);
+				o.pos = UnityObjectToClipPos(v.vertex);
 				o.uv = v.uv;             
 
 				TRANSFER_VERTEX_TO_FRAGMENT(o);
@@ -63,12 +59,12 @@ Shader "custom/globeFX"
              
 			half4 frag (v2f i) : COLOR
 			{
-				fixed NdotL = dot(i.normalWorld, i.lightDirection);
+				fixed NdotL = dot(i.normalWorld, _WorldSpaceLightPos0);
 				half atten = LIGHT_ATTENUATION(i);
 				fixed3 diffuseReflection = _LightColor0.rgb * atten * float3(1,1,1);
 				fixed3 finalColor = UNITY_LIGHTMODEL_AMBIENT.xyz + diffuseReflection;
-                 
-				return float4(finalColor, 1.0);
+                
+				return float4(finalColor * NdotL, 1.0);
 			}
 			ENDCG
 		}

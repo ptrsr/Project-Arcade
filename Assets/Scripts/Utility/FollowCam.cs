@@ -29,12 +29,12 @@ public class FollowCam : MonoBehaviour
 
         _currentFocusPos = _target.transform.position;
         SetCameraTransform(_target);
-	}
-	
-	void FixedUpdate ()
+    }
+
+    void FixedUpdate ()
     {
         Follow(_target, GetFocusPosition(_target));
-	}
+    }
 
     private void OnValidate()
     {
@@ -74,7 +74,7 @@ public class FollowCam : MonoBehaviour
         Vector3 focusGlobePos = target.GlobePosition;
         focusGlobePos.y = target.GlobeRadius + _focusHeight;
 
-        Vector3 focusTargetPos = target.MoveTarget.GlobePosition;
+        Vector3 focusTargetPos = target.LastMove + target.GlobePosition;
         focusGlobePos.y = target.GlobeRadius + _focusHeight;
 
         Vector3 newFocusPos = focusGlobePos +  (focusGlobePos - focusTargetPos).normalized * _forwardMulti;

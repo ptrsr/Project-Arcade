@@ -21,9 +21,8 @@ public class SpaceShip : MovingObject
         ServiceLocator.Provide(this);
     }
 
-    protected override void Start()
+    private void Start()
     {
-        base.Start();
         SelectWeapon(0);
     }
 
@@ -35,7 +34,7 @@ public class SpaceShip : MovingObject
     void FixedUpdate ()
     {
         Vector2 nextMove = Movement();
-        Move(nextMove);
+        Move(new Vector3(nextMove.x, 0, nextMove.y));
 
         if (_weaponComponent != null)
         {

@@ -4,15 +4,16 @@ using UnityEngine;
 
 public class GlobeObject : MonoBehaviour
 {
-    private Globe _globe;
-
     [SerializeField]
     private Vector3 _globePosition;
 
     [SerializeField]
-    protected bool _active = true;
+    private bool
+        _beamable = false,
+        _active   = false;
 
     private bool _beamed = false;
+    private Globe _globe;
 
     public GlobeObject()
     {
@@ -43,9 +44,6 @@ public class GlobeObject : MonoBehaviour
         {
             _globePosition = value;
 
-            if (!_active)
-                return;
-
             try
             {
                 transform.position = new Vector3(Mathf.Sin(_globePosition.x) * Mathf.Cos(_globePosition.z), (Mathf.Cos(_globePosition.x) * Mathf.Cos(_globePosition.z)), Mathf.Sin(_globePosition.z)) * (Globe.Radius + _globePosition.y);
@@ -75,16 +73,21 @@ public class GlobeObject : MonoBehaviour
         }
     }
 
+    public bool Active
+    {
+        get { return _active;  }
+        set { _active = value; }
+    }
+
+    public bool Beamable
+    {
+        get { return _beamable; }
+    }
+
     public bool Beamed
     {
         get { return _beamed;  }
         set { _beamed = value; }
-    }
-
-    public virtual bool Active
-    {
-        get { return _active;  }
-        set { _active = value; }
     }
 
     public float GlobeRadius

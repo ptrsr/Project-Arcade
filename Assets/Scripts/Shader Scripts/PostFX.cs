@@ -9,21 +9,47 @@ public class PostFX : MonoBehaviour
 
     [SerializeField]
     private Shader _shader;
+
+    [SerializeField]
+    private Color
+        _skyColor,
+        _duskColor;
+
+    [SerializeField]
+    private float
+        _skyBegin,
+        _duskBegin;
+
     private Material _mat;
 
     private Camera _cam;
     private Globe _globe;
 
+    private GlobeObject _player;
+
     private void Start()
     {
         _cam = Camera.main;
         _mat = new Material(_shader);
+
         _globe = ServiceLocator.Locate<Globe>();
+        _player = ServiceLocator.Locate<SpaceShip>();
 
         _cam.depthTextureMode = DepthTextureMode.Depth;
 
         Globe.onGlobeChange += SetShaderUniforms;
         SetShaderUniforms();
+    }
+
+    private void Update()
+    {
+        float height = _player.transform.position.y / (_globe.Radius + _player.GlobePosition.y);
+
+        float skyMulti = (height + 1) / 2;
+        float duskMulti = 1 - Mathf.Abs(height);
+
+        _mat.SetFloat("_skyMulti", skyMulti);
+        _mat.SetFloat("_duskMulti", duskMulti);
     }
 
     private void OnValidate()
@@ -38,6 +64,13 @@ public class PostFX : MonoBehaviour
 
         _mat.SetFloat("_levelWidth", _globe.LevelWidth);
         _mat.SetFloat("_borderFade", _borderFade);
+
+        _mat.SetColor("_skyColor", _skyColor);
+        _mat.SetColor("_duskColor", _duskColor);
+
+        _mat.SetFloat("_skyBegin", _skyBegin);
+        _mat.SetFloat("_duskBegin", _duskBegin);
+
     }
 
     [ImageEffectOpaque]

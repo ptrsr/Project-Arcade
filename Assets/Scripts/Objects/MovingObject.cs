@@ -2,61 +2,58 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody))]
 public class MovingObject : GlobeObject
 {
+    protected enum RotateType
+    {
+        towards,
+        slerp
+    }
+
+    [SerializeField]
+    protected RotateType _rotateType = RotateType.towards;
+
     [SerializeField] [Range(0, 1)]
     private float _acceleration = 0.9f;
 
     [SerializeField]
-    private float _rotateSpeed;
+    protected float _rotateSpeed;
 
     [SerializeField]
-    private Vector2
-        _movementSpeed = new Vector2();
+    private Vector3
+        _movementSpeed = new Vector3();
+
+    private Vector3
+        _lastMove;
+
+    protected Quaternion
+        _lastRotation;
 
     private Rigidbody   _rigidBody;
-    private GlobeObject _moveTarget;
 
-    protected virtual void Start ()
+    protected void Move(Vector3 move)
     {
-        _moveTarget = new GlobeObject();
-        _moveTarget.Active = false;
-        _moveTarget.GlobePosition = GlobePosition;
-    }
-	
-    protected void Move(Vector2 move)
-    {
-        if (!Active || move == new Vector2())
+        if (move == new Vector3())
             return;
 
         float moveScalar = GlobeRadius + GlobePosition.y; // so the object speed doesn't change with altitude
+        _lastMove = new Vector3((move.x * _movementSpeed.x) / moveScalar, move.y * _movementSpeed.y, (move.z * _movementSpeed.z) / moveScalar) * Time.deltaTime;
 
-        _moveTarget.GlobePosition += new Vector3((move.x * _movementSpeed.x) / moveScalar, 0, (move.y * _movementSpeed.y) / moveScalar) * Time.deltaTime;
+        _lastRotation = transform.rotation;
+        GlobePosition += _lastMove;
 
-        Quaternion lastRotation = transform.rotation;
-        GlobePosition = Vector3.Slerp(GlobePosition, _moveTarget.GlobePosition, _acceleration);
-
-
-        transform.rotation *=  Quaternion.LookRotation((_moveTarget.GlobePosition - GlobePosition).normalized);
+        RotateTo(_lastMove);
     }
 
-    public GlobeObject MoveTarget
+    protected virtual void RotateTo(Vector3 move, float testAngle = 0)
     {
-        get { return _moveTarget; }
-        protected set { _moveTarget = value; }
-    }
+        transform.up = GlobeUp;
+        Quaternion desired = transform.rotation * Quaternion.LookRotation(move.normalized);
 
-    public override bool Active
-    {
-        get { return _active;  }
-        set
-        {
-            _active = value;
-
-            if (_active)
-                _moveTarget.GlobePosition = GlobePosition;
-        }
+        if (_rotateType == RotateType.towards)
+            transform.rotation = Quaternion.RotateTowards(_lastRotation, desired, _rotateSpeed);
+        else
+            transform.rotation = Quaternion.Slerp(_lastRotation, desired, _rotateSpeed);
     }
 
     protected Rigidbody Body
@@ -69,6 +66,11 @@ public class MovingObject : GlobeObject
             return _rigidBody;
         }
         set { _rigidBody = value; }
+    }
+
+    public Vector3 LastMove
+    {
+        get { return _lastMove; }
     }
 
     public Vector2 MovementSpeed

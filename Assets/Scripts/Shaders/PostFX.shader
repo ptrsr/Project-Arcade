@@ -33,7 +33,7 @@ Shader "custom/post_fx"
 			};
 
 			uniform sampler2D _Scene;
-			uniform sampler2D _CameraDepthTexture;
+			uniform sampler2D _LastCameraDepthTexture;
 
 			v2f vert (appdata v)
 			{
@@ -47,6 +47,7 @@ Shader "custom/post_fx"
 
 			//functions
 			float3 worldPosition (float depth, float4 ray);
+			float3 skyBox(float3 worldPos);
 
 			uniform float _levelWidth;
 			uniform float _borderFade;
@@ -58,15 +59,14 @@ Shader "custom/post_fx"
 
 				// depth sampling
 				float linearDepth;
-				float3 viewNormal;
 
-				linearDepth = Linear01Depth(tex2D(_CameraDepthTexture, i.uv));
+				linearDepth = Linear01Depth(tex2D(_LastCameraDepthTexture, i.uv));
 
 				// fragments world position
 				float3 worldPos = worldPosition (linearDepth, i.ray);
 
 				if (linearDepth == 1)
-					return worldPos.y;
+					return float4(skyBox(worldPos), 1);
 					//return float4(0,0,1, 1);
 
 				float fade = 1 - clamp(_levelWidth - abs(worldPos.z) + (abs(worldPos.z) - _levelWidth) * _borderFade, 0, 1);
@@ -81,6 +81,31 @@ Shader "custom/post_fx"
 				float3 pos = _WorldSpaceCameraPos + dir;
 				return pos;
 			}
+
+			float4 _skyColor;
+			float4 _duskColor;
+
+			float _skyBegin;
+			float _duskBegin;
+
+			float _duskMulti;
+			float _skyMulti;
+
+
+			float3 skyBox(float3 worldPos)
+			{
+				float3 finalColor;
+
+				float3 pos = worldPos / 200;
+
+				float3 skyColor = clamp(pos.y - _skyBegin, 0, 1) * _skyColor * _skyMulti * (1 - _duskMulti);
+				float3 duskColor = clamp(pos.y - _duskBegin, 0, 1) * _duskColor * _duskMulti;	
+
+			   finalColor =  skyColor + duskColor;
+				
+			   return finalColor;
+			}
+
 
 			ENDCG
 		}
