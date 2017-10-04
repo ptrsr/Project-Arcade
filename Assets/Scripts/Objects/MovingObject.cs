@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum RotateType
+{
+    towards,
+    slerp
+}
+
 public class MovingObject : GlobeObject
 {
-    protected enum RotateType
-    {
-        towards,
-        slerp
-    }
-
     [SerializeField]
     protected RotateType _rotateType = RotateType.towards;
 

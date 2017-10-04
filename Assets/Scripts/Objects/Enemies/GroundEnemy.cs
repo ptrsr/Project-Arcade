@@ -13,21 +13,11 @@ public class GroundEnemy : MovingObject
         _rayForward,
         _rayDistance;
 
-    [SerializeField]
-    private TurretHead _turret;
     private GlobeObject _target;
-
-    private Renderer rend;
-
-    private bool _targetInRange = false;
-
 
     void Start()
     {
         _target = ServiceLocator.Locate<SpaceShip>();
-        rend = GetComponent<Renderer>();
-
-        _turret.Parent = this;
     }
 
 
@@ -39,15 +29,6 @@ public class GroundEnemy : MovingObject
                 CheckIfUpright();
 
             return;
-        }
-
-        _targetInRange = CheckInRange(_target);
-
-
-        print(Vector3.Distance(WorldPosition, _target.WorldPosition));
-        if (_targetInRange && _turret != null)
-        {
-            _turret.Aim(_target);
         }
     }
 
@@ -94,9 +75,4 @@ public class GroundEnemy : MovingObject
         return nextMove;
     }
 
-
-    public bool TargetInRange
-    {
-        get { return _targetInRange; }
-    }
 }
