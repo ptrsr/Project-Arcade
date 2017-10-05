@@ -5,7 +5,10 @@ using UnityEngine;
 public class GlobeFX : MonoBehaviour
 {
     [SerializeField]
-    private Texture _texture;
+    private Texture
+        _splatMap,
+        _grass,
+        _water;
 
     [SerializeField]
     private Shader _shader;
@@ -17,11 +20,17 @@ public class GlobeFX : MonoBehaviour
         _mat = new Material(_shader);
         GetComponent<MeshRenderer>().material = _mat;
 
-        _mat.SetTexture("_splatmap", _texture);
 	}
-	
-	void Update ()
+
+    private void OnValidate()
     {
-		
-	}
+
+    }
+
+    private void SetUniforms()
+    {
+        _mat.SetTexture("_splatmap", _splatMap);
+        _mat.SetTexture("_grass", _grass);
+        _mat.SetTexture("_water", _water);
+    }
 }

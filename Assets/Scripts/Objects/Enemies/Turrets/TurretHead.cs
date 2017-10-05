@@ -38,7 +38,7 @@ abstract public class TurretHead : MonoBehaviour
 
     private float _reloadTime;
 
-    private void Start()
+    protected virtual void Start()
     {
         _target = ServiceLocator.Locate<SpaceShip>();
 
@@ -106,5 +106,10 @@ abstract public class TurretHead : MonoBehaviour
     private bool CheckInRange(GlobeObject target)
     {
         return Vector3.Distance(transform.position, target.WorldPosition) < _range;
+    }
+
+    protected float ReloadStatus
+    {
+        get { return 1 - _reloadTime / _reloadSpeed; }
     }
 }

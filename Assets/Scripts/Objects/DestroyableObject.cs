@@ -70,7 +70,10 @@ public class DestroyableObject : MonoBehaviour
             Part PartComp = part.AddComponent<Part>();
 
             Vector3 force = (part.transform.position - transform.position).normalized * _partForceMulti;
-            force.z = 0;
+
+            if (_rigidBody != null)
+                force += _rigidBody.velocity;
+
             PartComp.ExplodeForce = force;
         }
 
@@ -116,6 +119,7 @@ public class DestroyableObject : MonoBehaviour
     {
         List<GameObject> objects = new List<GameObject>();
         objects.Add(gameObject);
+        gameObject.transform.parent = null;
 
         for (int i = gameObject.transform.childCount - 1; i >= 0; i--)
             objects.AddRange(GetAllVisualParts(gameObject.transform.GetChild(i).gameObject, false));
@@ -125,7 +129,12 @@ public class DestroyableObject : MonoBehaviour
 
         for (int i = objects.Count - 1; i >= 0; i--)
             if (objects[i].GetComponent<MeshRenderer>() == null)
+            {
+                GameObject obj = objects[i];
                 objects.RemoveAt(i);
+
+                Destroy(obj);
+            }
 
         return objects;
     }

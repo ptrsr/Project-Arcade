@@ -8,27 +8,25 @@ public class RocketLauncher : TurretHead
     [SerializeField]
     private Transform _rocketSpawn;
 
-    private GameObject _currentRocket;
+    [SerializeField]
+    private Rocket _currentRocket;
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-
-    // Update is called once per frame
     protected override void Update()
     {
         base.Update();
+        _currentRocket.SetTransparancy(ReloadStatus);
 
-
+        if (_currentRocket == null)
+            GetComponent<DestroyableObject>().Explode();
     }
 
     protected override void Fire()
     {
-        _currentRocket.GetComponent<Rocket>().Fire(_target);
-        _currentRocket = Instantiate(_projectilePrefab, _rocketSpawn);
+        _currentRocket.Fire(_target);
 
-        _currentRocket.transform.rotation = Quaternion.identity;
+        _currentRocket = Instantiate(_projectilePrefab, _rocketSpawn).GetComponent<Rocket>();
+
+        _currentRocket.transform.localRotation = Quaternion.identity;
         _currentRocket.transform.localPosition = new Vector3();
     }
 }

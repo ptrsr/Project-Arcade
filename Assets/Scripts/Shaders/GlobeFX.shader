@@ -39,8 +39,6 @@ Shader "custom/globeFX"
 				LIGHTING_COORDS(4,6)
 			};
  
-			uniform sampler2D _splatmap;
-
 			v2f vert (appdata v)
 			{
 				v2f o;
@@ -56,15 +54,15 @@ Shader "custom/globeFX"
                  
 				return o;
 			}
-             
-			half4 frag (v2f i) : COLOR
+
+			half3 frag (v2f i) : COLOR
 			{
 				fixed NdotL = dot(i.normalWorld, _WorldSpaceLightPos0);
 				half atten = LIGHT_ATTENUATION(i);
-				fixed3 diffuseReflection = _LightColor0.rgb * atten * float3(1,1,1);
+				fixed3 diffuseReflection = _LightColor0.rgb * atten;
 				fixed3 finalColor = UNITY_LIGHTMODEL_AMBIENT.xyz + diffuseReflection;
                 
-				return float4(finalColor * NdotL, 1.0);
+				return finalColor;
 			}
 			ENDCG
 		}
