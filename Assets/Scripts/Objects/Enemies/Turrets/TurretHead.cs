@@ -105,7 +105,7 @@ abstract public class TurretHead : MonoBehaviour
 
     private bool CheckInRange(GlobeObject target)
     {
-        return Vector3.Distance(transform.position, target.WorldPosition) < _range;
+        return Vector3.Distance(transform.position, target.ScenePosition) < _range;
     }
 
     protected float ReloadStatus

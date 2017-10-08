@@ -51,8 +51,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1251344003540036}
-  m_LocalRotation: {x: 0, y: 0, z: 0.0299955, w: 0.99955004}
-  m_LocalPosition: {x: -5.675293, y: 94.474686, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0.029995501, w: 0.99955004}
+  m_LocalPosition: {x: -12.523482, y: 208.47418, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4750041561125214}
@@ -135,10 +135,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _globePosition: {x: -0.06, y: 8.85, z: 0}
+  _beamable: 0
   _active: 1
+  _rotateType: 0
   _acceleration: 0.9
   _rotateSpeed: 0
-  _movementSpeed: {x: 10, y: 10}
+  _movementSpeed: {x: 10, y: 10, z: 0}
   _weaponAttachment: {fileID: 4750041561125214}
   _weaponPrefabs:
   - {fileID: 1731094483438550, guid: 4c9de6064925ecf49ba55ef5177794f2, type: 2}

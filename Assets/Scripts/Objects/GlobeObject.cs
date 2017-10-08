@@ -37,6 +37,16 @@ public class GlobeObject : MonoBehaviour
         GlobePosition = GlobePosition;
     }
 
+    protected Vector3 TerrainPosition(Vector3 GlobePosition)
+    {
+        Vector3 rayPos = Globe.GlobeToScenePosition(new Vector3(GlobePosition.x, Globe.MaxHeight + 1, GlobePosition.z));
+
+        Ray ray = new Ray(rayPos, -GlobeUp);
+
+        RaycastHit hit;
+        Physics.Raycast(rayPos, -GlobeUp, out hit, )
+    }
+
     public Vector3 GlobePosition
     {
         get { return _globePosition; }
@@ -46,13 +56,13 @@ public class GlobeObject : MonoBehaviour
 
             try
             {
-                transform.position = new Vector3(Mathf.Sin(_globePosition.x) * Mathf.Cos(_globePosition.z), (Mathf.Cos(_globePosition.x) * Mathf.Cos(_globePosition.z)), Mathf.Sin(_globePosition.z)) * (Globe.Radius + _globePosition.y);
+                transform.position = Globe.GlobeToScenePosition(value + new Vector3(0, _globe.Radius, 0));
                 transform.up = GlobeUp;
             } catch { }
         }
     }
 
-    public Vector3 WorldPosition
+    public Vector3 ScenePosition
     {
         get
         {

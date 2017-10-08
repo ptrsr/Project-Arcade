@@ -36,7 +36,7 @@ public class GroundEnemy : MovingObject
     private bool CheckInRange(GlobeObject target)
     {
         return
-            Vector3.Distance(WorldPosition, target.WorldPosition) < _range &&
+            Vector3.Distance(ScenePosition, target.ScenePosition) < _range &&
             target.GlobePosition.y - GlobePosition.y < _range;
     }
 

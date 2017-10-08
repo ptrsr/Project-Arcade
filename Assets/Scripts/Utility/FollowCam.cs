@@ -21,11 +21,13 @@ public class FollowCam : MonoBehaviour
 
     private Vector3 _currentFocusPos;
 
+    private Globe _globe;
     private MovingObject _target;
 
 	void Start ()
     {
         _target = ServiceLocator.Locate<SpaceShip>();
+        _globe = ServiceLocator.Locate<Globe>();
 
         _currentFocusPos = _target.transform.position;
         SetCameraTransform(_target);
@@ -55,7 +57,7 @@ public class FollowCam : MonoBehaviour
     private Vector3 HoverPosition(GlobeObject focusTarget)
     {
         Vector3 focusPos = focusTarget.GlobePosition;
-        focusPos.y = _hoverHeight;
+        focusPos.y = _hoverHeight * Radius;
 
         focusPos = Globe.GlobeToScenePosition(focusPos);
 
@@ -66,20 +68,33 @@ public class FollowCam : MonoBehaviour
     public void SetCameraTransform(GlobeObject focusTarget)
     {
         transform.position = HoverPosition(focusTarget);
-        transform.rotation = Quaternion.LookRotation((focusTarget.WorldPosition - transform.position).normalized, focusTarget.transform.up);
+        transform.rotation = Quaternion.LookRotation((focusTarget.ScenePosition - transform.position).normalized, focusTarget.transform.up);
     }
 
     private Vector3 GetFocusPosition(MovingObject target)
     {
+        float focusHeight = _focusHeight * Radius;
+
         Vector3 focusGlobePos = target.GlobePosition;
-        focusGlobePos.y = target.GlobeRadius + _focusHeight;
+        focusGlobePos.y = target.GlobeRadius + focusHeight;
 
         Vector3 focusTargetPos = target.LastMove + target.GlobePosition;
-        focusGlobePos.y = target.GlobeRadius + _focusHeight;
+        focusGlobePos.y = target.GlobeRadius + focusHeight;
 
         Vector3 newFocusPos = focusGlobePos +  (focusGlobePos - focusTargetPos).normalized * _forwardMulti;
         _currentFocusPos = Vector3.Slerp(_currentFocusPos, Globe.GlobeToScenePosition(newFocusPos), _rotateSpeed);
 
         return _currentFocusPos;
+    }
+
+    private float Radius
+    {
+        get
+        {
+            if (_globe == null)
+                _globe = ServiceLocator.Locate<Globe>();
+
+            return _globe.Radius;
+        }
     }
 }
