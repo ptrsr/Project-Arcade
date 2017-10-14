@@ -19,9 +19,9 @@ class ServiceLocator
     {
         object temp;
         if (_instance._objects.TryGetValue(typeof(T), out temp))
-            _instance._objects[typeof(T)] = item;
-        else
-            _instance._objects.Add(typeof(T), item);
+            _instance._objects.Remove(typeof(T));
+
+        _instance._objects.Add(typeof(T), item);
     }
 
     public static T Locate<T>()

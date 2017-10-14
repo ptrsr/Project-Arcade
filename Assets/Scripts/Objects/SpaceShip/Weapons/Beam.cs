@@ -105,10 +105,7 @@ public class Beam : Weapon
         GlobeObject globeComponent = gObject.GetComponent<GlobeObject>();
 
         if (globeComponent != null)
-        {
-            globeComponent.Active = false;
             globeComponent.Beamed = true;
-        }
 
         gObject.transform.parent = transform;
         gObject.ApplyForce(new Vector3());

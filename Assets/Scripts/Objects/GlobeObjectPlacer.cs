@@ -28,17 +28,26 @@ public class GlobeObjectPlacer : Editor
         Ray ray = cam.ScreenPointToRay(mousePosition);
         RaycastHit hit;
 
-        if (!Physics.Raycast(ray, out hit, 1 << 8))
+        if (!Physics.Raycast(ray, out hit, 1 << 10))
             return;
 
         GlobeObject building = (GlobeObject)target;
-        building.Active = true;
-        building.SetPosition(hit.point);
+
+        if (!Event.current.alt)
+        {
+            building.SetPosition(hit.point);
+            building.transform.up = hit.normal;
+        }
+        else
+        {
+            Vector3 delta = building.transform.InverseTransformDirection(hit.point - building.transform.position);
+            delta.y = 0;
+            Vector3 lookPos = building.transform.TransformDirection(delta);
+
+            building.transform.rotation = Quaternion.LookRotation(lookPos.normalized, building.transform.up);
+        }
 
         if (Event.current.type == EventType.mouseDown)
-        {
             _placing = false;
-            building.Active = false;
-        }
     }
 }

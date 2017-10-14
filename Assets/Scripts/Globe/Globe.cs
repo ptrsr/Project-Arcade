@@ -4,6 +4,7 @@ using UnityEngine;
 
 public delegate void OnGlobeChange();
 
+[ExecuteInEditMode]
 [RequireComponent(typeof(MeshRenderer))]
 [RequireComponent(typeof(MeshFilter))]
 public class Globe : MonoBehaviour
@@ -51,6 +52,7 @@ public class Globe : MonoBehaviour
     private MeshFilter   _mf;
     private Material     _mat;
 
+    private bool _updated;
 
     private Globe()
     {
@@ -65,6 +67,12 @@ public class Globe : MonoBehaviour
     private void Update()
     {
         _mat.SetFloat("_timer", Time.time / _waveSpeed);
+
+        if (!_updated)
+        {
+            SetUniforms();
+            _updated = true;
+        }
     }
 
     private void OnValidate()
@@ -73,6 +81,8 @@ public class Globe : MonoBehaviour
 
         SetRotation();
         OnGlobeChanged();
+
+        _updated = false;
     }
 
     void OnGlobeChanged()
@@ -81,10 +91,7 @@ public class Globe : MonoBehaviour
             return;
 
         foreach (OnGlobeChange change in onGlobeChange.GetInvocationList())
-            if (change.Target == null)
-                onGlobeChange -= change;
-
-        onGlobeChange();
+            try { change(); } catch { onGlobeChange -= change; }
     }
 
     private void SetRotation()
@@ -102,6 +109,8 @@ public class Globe : MonoBehaviour
     {
         _mat = new Material(_shader);
 
+        _mat.shader = _shader;
+
         _mat.SetFloat("_ambient", _ambient);
         _mat.SetFloat("_specular", _specular);
 
@@ -113,7 +122,6 @@ public class Globe : MonoBehaviour
         _mat.SetFloat("_waveHeight", _waveHeight * _radius);
 
         _mat.SetTexture("_waveMap", _waveMap);
-
         MR.material = _mat;
     }
 
@@ -308,6 +316,8 @@ public class Globe : MonoBehaviour
 
     #endregion
 
+
+
     #region GETTERS / SETTERS
     private MeshRenderer MR
     {
@@ -338,7 +348,7 @@ public class Globe : MonoBehaviour
 
     public float MaxHeight
     {
-        get { return _heightMulti * _radius; }
+        get { return _radius + _heightMulti * _radius; }
     }
 
     public float Gravity
@@ -349,6 +359,11 @@ public class Globe : MonoBehaviour
     public float LevelWidth
     {
         get { return _levelWidth; }
+    }
+
+    public float WaterLevel
+    {
+        get { return _radius + _waterLevel; }
     }
 
     public static Vector3 SceneToGlobePosition(Vector3 scenePosition, bool relative = false)
@@ -364,7 +379,30 @@ public class Globe : MonoBehaviour
 
     public static Vector3 GlobeToScenePosition(Vector3 globePosition)
     {
-        return new Vector3(Mathf.Sin(globePosition.x) * Mathf.Cos(globePosition.z), Mathf.Cos(globePosition.x) * Mathf.Cos(globePosition.z), Mathf.Sin(globePosition.z)) * globePosition.y;
+        Vector3 temp;
+        return GlobeToScenePosition(globePosition, out temp);
+    }
+
+    public static Vector3 GlobeToScenePosition(Vector3 globePosition, out Vector3 normal)
+    {
+        Globe globe = ServiceLocator.Locate<Globe>();
+
+        Vector3 rayGlobePos = new Vector3(globePosition.x, globe.MaxHeight + 1, globePosition.z);
+        Vector3 rayPos = new Vector3(Mathf.Sin(rayGlobePos.x) * Mathf.Cos(rayGlobePos.z), Mathf.Cos(rayGlobePos.x) * Mathf.Cos(rayGlobePos.z), Mathf.Sin(rayGlobePos.z)) * rayGlobePos.y;
+
+        Vector3 GlobeDown = -rayPos.normalized;
+
+        RaycastHit tempHit;
+        if (Physics.Raycast(rayPos, GlobeDown, out tempHit, globe.MaxHeight - globe.WaterLevel + 1, 1 << 10))
+        {
+            normal = tempHit.normal;
+            return tempHit.point + tempHit.point.normalized * globePosition.y;
+        }
+        else
+        {
+            normal = -GlobeDown;
+            return rayPos.normalized * (globe.WaterLevel + globePosition.y);
+        }
     }
     #endregion
 

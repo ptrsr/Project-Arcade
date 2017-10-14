@@ -215,7 +215,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1373363841909768}
   m_LocalRotation: {x: -0.062377058, y: 0, z: -0.01077668, w: 0.99799454}
-  m_LocalPosition: {x: 1.8454618, y: 85.10743, z: -10.681813}
+  m_LocalPosition: {x: -32.73, y: 213, z: 18.15}
   m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
   m_Children:
   - {fileID: 4252788068733874}
@@ -660,6 +660,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _force: 20
   _rotationSpeed: 100
+  _missAngle: 0
+  _missTime: 0
+  _destroyableObject: {fileID: 0}
   _mr: {fileID: 23008393491714388}
   _rb: {fileID: 54977755761122282}
 --- !u!114 &114874002538236446
@@ -674,14 +677,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _rotateType: 0
-  _headRotationSpeed: 10
-  _barrelRotationSpeed: 10
+  _headRotationSpeed: 40
+  _barrelRotationSpeed: 40
   _head: {fileID: 4252788068733874}
   _barrel: {fileID: 4099078663178558}
   _projectilePrefab: {fileID: 1638240817872252, guid: 4496e3b336741ed43b1b0a5d8c9347cb,
     type: 2}
   _reloadSpeed: 3
   _shootAngle: 15
-  _range: 20
+  _range: 50
   _rocketSpawn: {fileID: 4058803269039694}
   _currentRocket: {fileID: 114403924509454506}

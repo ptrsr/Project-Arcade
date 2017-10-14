@@ -5,12 +5,10 @@ using UnityEngine;
 public class GlobeObject : MonoBehaviour
 {
     [SerializeField]
-    private Vector3 _globePosition;
+    protected Vector3 _globePosition;
 
     [SerializeField]
-    private bool
-        _beamable = false,
-        _active   = false;
+    private bool _beamable = false;
 
     private bool _beamed = false;
     private Globe _globe;
@@ -37,28 +35,15 @@ public class GlobeObject : MonoBehaviour
         GlobePosition = GlobePosition;
     }
 
-    protected Vector3 TerrainPosition(Vector3 GlobePosition)
-    {
-        Vector3 rayPos = Globe.GlobeToScenePosition(new Vector3(GlobePosition.x, Globe.MaxHeight + 1, GlobePosition.z));
-
-        Ray ray = new Ray(rayPos, -GlobeUp);
-
-        RaycastHit hit;
-        Physics.Raycast(rayPos, -GlobeUp, out hit, )
-    }
-
-    public Vector3 GlobePosition
+    public virtual Vector3 GlobePosition
     {
         get { return _globePosition; }
         set
         {
             _globePosition = value;
 
-            try
-            {
-                transform.position = Globe.GlobeToScenePosition(value + new Vector3(0, _globe.Radius, 0));
-                transform.up = GlobeUp;
-            } catch { }
+            transform.position = Globe.GlobeToScenePosition(value);
+            transform.up = GlobeUp;
         }
     }
 
@@ -71,7 +56,6 @@ public class GlobeObject : MonoBehaviour
         }
     }
 
-
     public Globe Globe
     {
         get
@@ -81,12 +65,6 @@ public class GlobeObject : MonoBehaviour
 
             return _globe;
         }
-    }
-
-    public bool Active
-    {
-        get { return _active;  }
-        set { _active = value; }
     }
 
     public bool Beamable
