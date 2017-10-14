@@ -9,7 +9,8 @@ public class GlobeObject : MonoBehaviour
 
     [SerializeField]
     private bool
-        _beamable = false;
+        _beamable = false,
+        _active   = false;
 
     private bool _beamed = false;
     private Globe _globe;
@@ -38,9 +39,12 @@ public class GlobeObject : MonoBehaviour
 
     protected Vector3 TerrainPosition(Vector3 GlobePosition)
     {
-        float height = _globe.HeightAtGlobePosition(_globePosition);
+        Vector3 rayPos = Globe.GlobeToScenePosition(new Vector3(GlobePosition.x, Globe.MaxHeight + 1, GlobePosition.z));
 
-        return new Vector3(GlobePosition.x, height, GlobePosition.z);
+        Ray ray = new Ray(rayPos, -GlobeUp);
+
+        RaycastHit hit;
+        Physics.Raycast(rayPos, -GlobeUp, out hit, )
     }
 
     public Vector3 GlobePosition
@@ -77,6 +81,12 @@ public class GlobeObject : MonoBehaviour
 
             return _globe;
         }
+    }
+
+    public bool Active
+    {
+        get { return _active;  }
+        set { _active = value; }
     }
 
     public bool Beamable

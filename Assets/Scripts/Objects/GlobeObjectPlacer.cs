@@ -32,9 +32,13 @@ public class GlobeObjectPlacer : Editor
             return;
 
         GlobeObject building = (GlobeObject)target;
+        building.Active = true;
         building.SetPosition(hit.point);
 
         if (Event.current.type == EventType.mouseDown)
+        {
             _placing = false;
+            building.Active = false;
+        }
     }
 }

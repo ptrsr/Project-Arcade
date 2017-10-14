@@ -69,8 +69,6 @@ public class Globe : MonoBehaviour
 
     private void OnValidate()
     {
-        ServiceLocator.Provide(this);
-
         CreateWorld();
 
         SetRotation();
@@ -302,9 +300,9 @@ public class Globe : MonoBehaviour
         return _radius + _heightMap.GetPixel((int)(uv.x * _heightMap.width), (int)(uv.y * _heightMap.height)).grayscale * (_heightMulti * _radius);
     }
 
-    private Vector2 CalcUV(Vector3 position)
+    private Vector2 CalcUV(Vector3 vertice)
     {
-        Vector3 d = position.normalized;
+        Vector3 d = vertice.normalized;
         return new Vector2(0.5f + Mathf.Atan2(d.x, d.z) / Mathf.PI / 2, Mathf.Asin(d.y) / Mathf.PI + 0.5f);
     }
 
@@ -367,16 +365,6 @@ public class Globe : MonoBehaviour
     public static Vector3 GlobeToScenePosition(Vector3 globePosition)
     {
         return new Vector3(Mathf.Sin(globePosition.x) * Mathf.Cos(globePosition.z), Mathf.Cos(globePosition.x) * Mathf.Cos(globePosition.z), Mathf.Sin(globePosition.z)) * globePosition.y;
-    }
-
-    public Vector3 TerrainPosition(Vector3 position)
-    {
-        Vector3 rayPos = position.normalized * MaxHeight;
-
-        RaycastHit hit;
-        if (Physics.Raycast(rayPos, -rayPos.normalized, out hit, _radius - MaxHeight))
-            return hit.point;
-        }
     }
     #endregion
 

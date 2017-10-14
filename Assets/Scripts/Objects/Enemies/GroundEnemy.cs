@@ -23,8 +23,13 @@ public class GroundEnemy : MovingObject
 
     void Update()
     {
-        if (Body != null && !Beamed)
-            CheckIfUpright();
+        if (!Active)
+        {
+            if (Body != null && !Beamed)
+                CheckIfUpright();
+
+            return;
+        }
     }
 
 
@@ -45,6 +50,7 @@ public class GroundEnemy : MovingObject
 
         if (Vector3.Angle(transform.position.normalized, transform.up) < 10)
         {
+            Active = true;
             GlobePosition = new Vector3(currentGlobePos.x, GlobePosition.y, GlobePosition.z);
             return;
         }
