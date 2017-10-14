@@ -13,6 +13,5 @@ public class TestObj : GlobeObject
 	
 	// Update is called once per frame
 	void Update () {
-        GlobePosition = TerrainPosition(_test);
 	}
 }

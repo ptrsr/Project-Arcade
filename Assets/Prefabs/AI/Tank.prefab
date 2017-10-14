@@ -215,8 +215,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1171739871180868}
-  m_LocalRotation: {x: 0, y: 0, z: 0.09485717, w: 0.9954909}
-  m_LocalPosition: {x: -16.280582, y: 84.65368, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0.094857164, w: 0.9954909}
+  m_LocalPosition: {x: -39.7378, y: 206.62352, z: 0}
   m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
   m_Children:
   - {fileID: 4807876335869900}
@@ -451,15 +451,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _globePosition: {x: -0.19, y: 0.41, z: 0}
-  _active: 1
+  _beamable: 0
+  _rotateType: 0
   _acceleration: 0.9
   _rotateSpeed: 0
-  _movementSpeed: {x: 5, y: 0}
+  _movementSpeed: {x: 5, y: 0, z: 0}
   _range: 7
-  _rotationSpeed: 2.5
   _minimumDistance: 0
   _resetVelocity: 0
   _resetHeight: 0
   _rayForward: 0
   _rayDistance: 0
-  _turret: {fileID: 114527733698023154}

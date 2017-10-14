@@ -24,7 +24,8 @@ public class MovingObject : GlobeObject
         _movementSpeed = new Vector3();
 
     private Vector3
-        _lastMove;
+        _lastMove,
+        _terrainNormal;
 
     protected Quaternion
         _lastRotation;
@@ -54,6 +55,22 @@ public class MovingObject : GlobeObject
             transform.rotation = Quaternion.RotateTowards(_lastRotation, desired, _rotateSpeed);
         else
             transform.rotation = Quaternion.Slerp(_lastRotation, desired, _rotateSpeed);
+    }
+
+    public override Vector3 GlobePosition
+    {
+        get
+        {
+            return base.GlobePosition;
+        }
+
+        set
+        {
+            _globePosition = value;
+
+            transform.position = Globe.GlobeToScenePosition(value, out _terrainNormal);
+            transform.up = GlobeUp;
+        }
     }
 
     protected Rigidbody Body
