@@ -10,7 +10,10 @@ public class GlobeObject : MonoBehaviour
     [SerializeField]
     private bool _beamable = false;
 
-    private bool _beamed = false;
+    private bool
+        _beamed = false,
+        _kinematic = false;
+
     private Globe _globe;
 
     public GlobeObject()
@@ -33,6 +36,7 @@ public class GlobeObject : MonoBehaviour
     protected virtual void OnValidate()
     {
         GlobePosition = GlobePosition;
+        transform.up = GlobeUp;
     }
 
     public virtual Vector3 GlobePosition
@@ -75,7 +79,25 @@ public class GlobeObject : MonoBehaviour
     public bool Beamed
     {
         get { return _beamed;  }
-        set { _beamed = value; }
+        set
+        {
+            _beamed = value;
+            Kinematic = value;
+        }
+    }
+
+    public bool Kinematic
+    {
+        get { return _kinematic; }
+        set
+        {
+            _kinematic = value;
+
+            Rigidbody rb = GetComponent<Rigidbody>();
+
+            if (rb != null)
+                rb.isKinematic = value;
+        }
     }
 
     public float GlobeRadius

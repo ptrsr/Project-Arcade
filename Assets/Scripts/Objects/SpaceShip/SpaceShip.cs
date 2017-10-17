@@ -33,12 +33,15 @@ public class SpaceShip : MovingObject
 
     void FixedUpdate ()
     {
-        Vector2 nextMove = Movement();
-        Move(new Vector3(nextMove.x, 0, nextMove.y));
+        Vector2 move2D = Movement();
+        Vector3 move = new Vector3(move2D.x, 0, move2D.y);
+
+        Move(move);
+        RotateTo(move, false);
 
         if (_weaponComponent != null)
         {
-            _weaponComponent.Aim(new Vector2(nextMove.x * MovementSpeed.x, nextMove.y * MovementSpeed.y));
+            _weaponComponent.Aim(new Vector2(move2D.x * MovementSpeed.x, move2D.y * MovementSpeed.y));
 
             if (Input.GetKey(KeyCode.Space))
                 _weaponComponent.Fire();

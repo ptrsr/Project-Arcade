@@ -27,9 +27,6 @@ public class MovingObject : GlobeObject
         _lastMove,
         _terrainNormal;
 
-    protected Quaternion
-        _lastRotation;
-
     private Rigidbody   _rigidBody;
 
     protected void Move(Vector3 move)
@@ -40,21 +37,37 @@ public class MovingObject : GlobeObject
         float moveScalar = GlobeRadius + GlobePosition.y; // so the object speed doesn't change with altitude
         _lastMove = new Vector3((move.x * _movementSpeed.x) / moveScalar, move.y * _movementSpeed.y, (move.z * _movementSpeed.z) / moveScalar) * Time.deltaTime;
 
-        _lastRotation = transform.rotation;
-        GlobePosition += _lastMove;
 
-        RotateTo(_lastMove);
+        GlobePosition += _lastMove;
     }
 
-    protected virtual void RotateTo(Vector3 move, float testAngle = 0)
+    protected virtual bool RotateTo(Vector3 move, bool onTerrain = true, float testAngle = 0)
     {
-        transform.up = GlobeUp;
-        Quaternion desired = transform.rotation * Quaternion.LookRotation(move.normalized);
+        if (move.x == 0 && move.z == 0)
+            return false;
+
+        Quaternion lastRotation = transform.rotation;
+
+        transform.up = onTerrain ? _terrainNormal : GlobeUp;
+
+        Vector3 localDirection = transform.InverseTransformDirection(move);
+        localDirection.y = 0;
+        Vector3 direction = transform.TransformDirection(localDirection);
+
+        Quaternion desired = Quaternion.LookRotation(direction, transform.up);
+
+        Vector3 desiredVector = desired * Vector3.forward;
+        Vector3 currentVector = lastRotation * Vector3.forward;
+        desiredVector.y = 0; currentVector.y = 0;
+
+        bool test = Vector3.Angle(desiredVector.normalized, currentVector.normalized) <= testAngle;
 
         if (_rotateType == RotateType.towards)
-            transform.rotation = Quaternion.RotateTowards(_lastRotation, desired, _rotateSpeed);
+            transform.rotation = Quaternion.RotateTowards(lastRotation, desired, _rotateSpeed * Time.deltaTime);
         else
-            transform.rotation = Quaternion.Slerp(_lastRotation, desired, _rotateSpeed);
+            transform.rotation = Quaternion.Slerp(lastRotation, desired, _rotateSpeed);
+
+        return test;
     }
 
     public override Vector3 GlobePosition
@@ -69,7 +82,6 @@ public class MovingObject : GlobeObject
             _globePosition = value;
 
             transform.position = Globe.GlobeToScenePosition(value, out _terrainNormal);
-            transform.up = GlobeUp;
         }
     }
 

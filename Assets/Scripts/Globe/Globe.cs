@@ -78,12 +78,13 @@ public class Globe : MonoBehaviour
     private void OnValidate()
     {
         CreateWorld();
-
         SetRotation();
         OnGlobeChanged();
 
         _updated = false;
     }
+
+
 
     void OnGlobeChanged()
     {
@@ -392,8 +393,10 @@ public class Globe : MonoBehaviour
 
         Vector3 GlobeDown = -rayPos.normalized;
 
+        float raylength = Application.isEditor ? 10000 : globe.MaxHeight - globe.WaterLevel + 1;
+
         RaycastHit tempHit;
-        if (Physics.Raycast(rayPos, GlobeDown, out tempHit, globe.MaxHeight - globe.WaterLevel + 1, 1 << 10))
+        if (Physics.Raycast(rayPos, GlobeDown, out tempHit, raylength, 1 << 10))
         {
             normal = tempHit.normal;
             return tempHit.point + tempHit.point.normalized * globePosition.y;

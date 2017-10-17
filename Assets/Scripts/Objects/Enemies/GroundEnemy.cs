@@ -15,28 +15,32 @@ public class GroundEnemy : MovingObject
 
     private GlobeObject _target;
 
-    void Start()
+    protected virtual void Start()
     {
         _target = ServiceLocator.Locate<SpaceShip>();
     }
 
 
-    void Update()
+    protected virtual void Update()
     {
-        if (Body != null && !Beamed)
+        if (Beamed)
             CheckIfUpright();
     }
 
 
-    private bool CheckInRange(GlobeObject target)
+    protected bool CheckInRange()
     {
-        return
-            Vector3.Distance(ScenePosition, target.ScenePosition) < _range &&
-            target.GlobePosition.y - GlobePosition.y < _range;
+        float distance = DistanceToTarget(ScenePosition, Target.ScenePosition);
+        return distance > _minimumDistance && distance < _range;
+    }
+
+    protected virtual float DistanceToTarget(Vector3 objectPos, Vector3 targetPos)
+    {
+        return Vector3.Distance(ScenePosition, Target.ScenePosition);
     }
 
 
-    public void CheckIfUpright()
+    private void CheckIfUpright()
     {
         Vector3 currentGlobePos = Globe.SceneToGlobePosition(transform.position, true);
 
@@ -59,14 +63,18 @@ public class GroundEnemy : MovingObject
     }
 
 
-    private Vector2 CheckDistance(Vector2 nextMove)
+    private bool CheckDistance()
     {
         Ray ray = new Ray(transform.position + transform.forward * _rayForward, transform.forward);
 
         if (Physics.Raycast(ray, _rayDistance))
-            return new Vector2();
+            return false;
 
-        return nextMove;
+        return true;
     }
 
+    protected GlobeObject Target
+    {
+        get { return _target; }
+    }
 }

@@ -44,10 +44,7 @@ public class Rocket : MonoBehaviour
             transform.rotation = Quaternion.RotateTowards(transform.rotation, desired, _rotationSpeed * Time.deltaTime);
 
             if (Quaternion.Angle(transform.rotation, desired) > _missAngle)
-            {
                 _destroyTime = _timer + _missTime;
-                print(true);
-            }
         }
         else if (_timer > _destroyTime)
             _destroyableObject.Explode();
