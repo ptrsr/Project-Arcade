@@ -20,11 +20,11 @@ public class RocketLauncher : TurretHead
             GetComponent<DestroyableObject>().Explode();
     }
 
-    protected override void Fire()
+    protected override void Fire(Transform projectileSpawnpoint)
     {
         _currentRocket.Fire(_target);
 
-        _currentRocket = Instantiate(_projectilePrefab, _rocketSpawn).GetComponent<Rocket>();
+        _currentRocket = Instantiate(_projectilePrefab, projectileSpawnpoint).GetComponent<Rocket>();
 
         _currentRocket.transform.localRotation = Quaternion.identity;
         _currentRocket.transform.localPosition = new Vector3();

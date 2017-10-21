@@ -7,13 +7,16 @@ using UnityEngine;
 public class Beam : Weapon
 {
     [SerializeField]
-    private float _beamSpeed = 0.01f;
+    private float
+        _beamSpeed = 0.01f,
+        _rotateSpeed = 5;
 
     private List<GravityObject> _beamableObjects;
     private MeshRenderer _mr;
     private Transform _attachmentPoint;
 
     private Vector2 _move;
+    private Vector3 _lastPosition;
 
     private void Start()
     {
@@ -34,13 +37,22 @@ public class Beam : Weapon
 
     protected override void OnFire()
     {
+        Vector3 deltaPosition = transform.position - _lastPosition;
+
         foreach (GravityObject gObject in _beamableObjects)
-            gObject.transform.position += (transform.parent.position - gObject.transform.position).normalized * _beamSpeed;
+        {
+            if (!gObject.Beamable)
+                continue;
+
+            gObject.transform.position += (transform.parent.position - gObject.transform.position).normalized * _beamSpeed + deltaPosition;
+        }
+        _lastPosition = transform.position;
     }
 
     protected override void OnFireEnabled()
     {
         _mr.enabled = true;
+        _lastPosition = transform.position;
 
         for (int i = _beamableObjects.Count - 1; i >= 0; i--)
         {
@@ -58,15 +70,11 @@ public class Beam : Weapon
 
         foreach (GravityObject gObject in _beamableObjects)
         {
-            gObject.transform.parent = null;
-            gObject.Gravity = true;
+            if (!gObject.Beamable)
+                continue;
 
             gObject.ApplyForce(new Vector3(_move.x, 0, _move.y));
-
-            GlobeObject globeComponent = gObject.GetComponent<GlobeObject>();
-
-            if (globeComponent != null)
-                globeComponent.Beamed = false;
+            gObject.Beamed = false;
         }
     }
 
@@ -92,23 +100,14 @@ public class Beam : Weapon
 
         if (_beamableObjects.Contains(gObject))
             _beamableObjects.Remove(gObject);
-
-        if (gObject.transform.parent == transform)
-        {
-            gObject.transform.parent = null;
-            gObject.Gravity = true;
-        }
     }
 
     private void OnBeam(GravityObject gObject)
     {
-        GlobeObject globeComponent = gObject.GetComponent<GlobeObject>();
+        if (!gObject.Beamable)
+            return;
 
-        if (globeComponent != null)
-            globeComponent.Beamed = true;
-
-        gObject.transform.parent = transform;
-        gObject.ApplyForce(new Vector3());
-        gObject.Gravity = false;
+        gObject.ApplyForce(new Vector3(), new Vector3(0, _rotateSpeed, 0));
+        gObject.Beamed = true;
     }
 }

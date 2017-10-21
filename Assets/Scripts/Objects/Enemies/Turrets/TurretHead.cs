@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-abstract public class TurretHead : MonoBehaviour
+public class TurretHead : MonoBehaviour
 {
     [SerializeField]
     RotateType _rotateType = RotateType.slerp;
@@ -17,9 +17,9 @@ abstract public class TurretHead : MonoBehaviour
         _head,
         _barrel;
 
-    //[SerializeField]
-    //private Transform[]
-    //    _projectileSpawnPoints;
+    [SerializeField]
+    private Transform[]
+        _projectileSpawnPoints;
 
     [SerializeField]
     protected GameObject _projectilePrefab;
@@ -30,6 +30,7 @@ abstract public class TurretHead : MonoBehaviour
         _shootAngle = 5,
         _range = 20;
 
+    private GravityObject _gravityObject;
     protected GlobeObject _target;
 
     private Quaternion
@@ -41,14 +42,18 @@ abstract public class TurretHead : MonoBehaviour
     protected virtual void Start()
     {
         _target = ServiceLocator.Locate<SpaceShip>();
+        _gravityObject = GetComponent<GravityObject>();
 
-        _idleHeadRotation = _head.rotation;
-        _idleBarrelRotation = _barrel.rotation;
+        _idleHeadRotation = _head.localRotation;
+        _idleBarrelRotation = _barrel.localRotation;
     }
 
     protected virtual void Update()
     {
         _reloadTime = Mathf.Clamp(_reloadTime - Time.deltaTime, 0, _reloadSpeed);
+
+        if (_gravityObject != null && (_gravityObject.Beamed || !_gravityObject.Kinematic))
+            return;
 
         if (CheckInRange(_target))
             Aim(_target);
@@ -58,13 +63,13 @@ abstract public class TurretHead : MonoBehaviour
 
     private void Idle()
     {
-        _head.rotation = _rotateType == RotateType.slerp ?
-            Quaternion.Slerp(_head.rotation, _idleHeadRotation, _headRotationSpeed * Time.deltaTime) :
-            Quaternion.RotateTowards(_head.rotation, _idleHeadRotation, _headRotationSpeed * Time.deltaTime);
+        _head.localRotation = _rotateType == RotateType.slerp ?
+            Quaternion.Slerp(_head.localRotation, _idleHeadRotation, _headRotationSpeed * Time.deltaTime) :
+            Quaternion.RotateTowards(_head.localRotation, _idleHeadRotation, _headRotationSpeed * Time.deltaTime);
 
-        _barrel.rotation = _rotateType == RotateType.slerp ?
-            Quaternion.Slerp(_barrel.rotation, _idleBarrelRotation, _barrelRotationSpeed * Time.deltaTime) :
-            Quaternion.RotateTowards(_barrel.rotation, _idleBarrelRotation, _barrelRotationSpeed * Time.deltaTime);
+        _barrel.localRotation = _rotateType == RotateType.slerp ?
+            Quaternion.Slerp(_barrel.localRotation, _idleBarrelRotation, _barrelRotationSpeed * Time.deltaTime) :
+            Quaternion.RotateTowards(_barrel.localRotation, _idleBarrelRotation, _barrelRotationSpeed * Time.deltaTime);
     }
 
     public void Aim(GlobeObject target)
@@ -81,27 +86,26 @@ abstract public class TurretHead : MonoBehaviour
         // barrel rotation
         Quaternion lastBarrelRotation = _barrel.rotation;
         _barrel.LookAt(target.transform);
+        _barrel.localEulerAngles = new Vector3(_barrel.localEulerAngles.x, 0, 0);
         Quaternion desiredRotation = _barrel.rotation;
-        _barrel.localEulerAngles = new Vector3(_barrel.localEulerAngles.x, 180, 0);
 
         _barrel.rotation = _rotateType == RotateType.slerp ?
             Quaternion.Slerp(lastBarrelRotation, _barrel.rotation, _barrelRotationSpeed * Time.deltaTime) :
             Quaternion.RotateTowards(lastBarrelRotation, _barrel.rotation, _barrelRotationSpeed * Time.deltaTime);
 
         // shooting
-        if (Quaternion.Angle(_barrel.rotation, desiredRotation) < _shootAngle && _reloadTime == 0)
+        if (Vector3.Angle(_barrel.forward, (target.ScenePosition - _barrel.position).normalized) < _shootAngle && _reloadTime == 0)
         {
             _reloadTime = _reloadSpeed;
-            Fire();
+            Fire(_projectileSpawnPoints[0]);
         }
     }
 
-    protected abstract void Fire();
-
-    //protected virtual void Fire(Transform spawnPos)
-    //{
-    //    Instantiate(_projectilePrefab, spawnPos.position, _barrel.rotation);
-    //}
+    protected virtual void Fire(Transform spawnPos)
+    {
+        GameObject projectile = Instantiate(_projectilePrefab, spawnPos.position, _barrel.rotation);
+        projectile.GetComponent<Projectile>().IgnoreSpawnObject(GetComponent<Collider>());
+    }
 
     private bool CheckInRange(GlobeObject target)
     {
@@ -112,4 +116,10 @@ abstract public class TurretHead : MonoBehaviour
     {
         get { return 1 - _reloadTime / _reloadSpeed; }
     }
+
+    protected Transform[] ProjectileSpawnPoints
+    {
+        get { return _projectileSpawnPoints; }
+    }
+
 }

@@ -19,6 +19,9 @@ public class Tank : GroundEnemy
     {
         base.Update();
 
+        if (!GravityObject.Kinematic)
+            return;
+
         Vector3 move = Movement(Target);
 
         bool go = false;

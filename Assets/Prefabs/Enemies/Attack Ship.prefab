@@ -280,7 +280,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1198496714131576}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 210.49, z: 0}
+  m_LocalPosition: {x: 0, y: 203.0322, z: 0}
   m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
   m_Children:
   - {fileID: 4582751886243088}
@@ -603,7 +603,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _globePosition: {x: 0, y: 0.48999977, z: 0}
-  _beamable: 0
   _rotateType: 0
   _acceleration: 0.9
   _rotateSpeed: 0
@@ -614,6 +613,8 @@ MonoBehaviour:
   _resetHeight: 0
   _rayForward: 4
   _rayDistance: 7
+  _explodeNormal: 0
+  _resetDistance: 0
 --- !u!114 &114433088813895388
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -625,11 +626,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2be749cf409eee4a94f65e2c914d131, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _sinkable: 1
   _health: 10
   _explosionSize: 5
   _partForceMulti: 3
   _destroyedPrefab: {fileID: 0}
-  _explosion: {fileID: 1894898483679224, guid: 1e87f382729966b4fa145f02a02ed868, type: 2}
   _removedBehaviours:
   - {fileID: 114108107111843516}
   - {fileID: 114433362134296240}
@@ -645,6 +646,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41488fac663ae8a4fa491ad968b1f70b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _rotateType: 1
   _headRotationSpeed: 1
   _barrelRotationSpeed: 2
   _head: {fileID: 4582751886243088}
@@ -655,6 +657,7 @@ MonoBehaviour:
     type: 2}
   _reloadSpeed: 3
   _shootAngle: 5
+  _range: 20
 --- !u!114 &114601823657735528
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -667,3 +670,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _gravity: 0
+  _startKinematic: 1
+  _beamable: 1

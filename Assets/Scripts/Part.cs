@@ -12,15 +12,22 @@ public class Part : GravityObject
         _sinkSpeed = 1,
         _despawnDepth = -1;
 
+    [SerializeField]
+    private int blinkSpeed = 5;
+
     private float _despawnTimer;
     bool _despawn = false;
 
     Vector3 _explodeForce = new Vector3();
+    Material _mat;
 
     protected override void Start()
     {
         gameObject.layer = 8;
         name = "Part";
+
+        _mat = GetComponent<MeshRenderer>().material;
+        _mat.EnableKeyword("_EMISSION");
 
         if (GetComponent<Rigidbody>() == null)
             gameObject.AddComponent<Rigidbody>();
@@ -29,7 +36,9 @@ public class Part : GravityObject
             gameObject.AddComponent<BoxCollider>();
 
         base.Start();
+
         Gravity = true;
+        Kinematic = false;
 
         _despawnTimer = _despawnTime;
 
@@ -37,18 +46,25 @@ public class Part : GravityObject
         ApplyForce(_explodeForce);
     }
 
+    private void Emit()
+    {
+        Color emitColor = Mathf.PingPong(_despawnTimer * blinkSpeed + _despawnTime, _despawnTime) * Color.yellow;
+        _mat.SetColor("_EmissionColor", emitColor);
+    }
+
     protected override void Update()
     {
         base.Update();
+
+        Emit();
 
         if (_despawn)
             return;
 
         if (Body.velocity.magnitude < _maxVelocityDespawn &&
-            Globe.SceneToGlobePosition(transform.position, true).y < _maxAltitudeDespawn)
+            Globe.SceneToGlobePosition(transform.position).y < _maxAltitudeDespawn)
         {
             _despawnTimer = Mathf.Clamp(_despawnTimer - Time.deltaTime, 0, _despawnTime);
-
 
             if (_despawnTimer == 0)
                 OnDespawn();
@@ -60,7 +76,8 @@ public class Part : GravityObject
     private void OnDespawn()
     {
         _despawn = true;
-        Gravity = false;
+        Beamable = false;
+        _mat.DisableKeyword("_EMISSION");
 
         Destroy(Body);
         Destroy(GetComponent<Collider>());
@@ -73,7 +90,7 @@ public class Part : GravityObject
 
         transform.position -= transform.position.normalized * _sinkSpeed * Time.deltaTime;
 
-        if (Globe.SceneToGlobePosition(transform.position, true).y < _despawnDepth)
+        if (Globe.SceneToGlobePosition(transform.position).y < _despawnDepth)
             Destroy(gameObject);
     }
 

@@ -5,6 +5,9 @@ using UnityEngine;
 public class DestroyableObject : MonoBehaviour
 {
     [SerializeField]
+    private bool _sinkable = true;
+
+    [SerializeField]
     private float
         _health,
         _explosionSize,
@@ -12,8 +15,7 @@ public class DestroyableObject : MonoBehaviour
 
     [SerializeField]
     private GameObject
-        _destroyedPrefab,
-        _explosion;
+        _destroyedPrefab;
 
     [SerializeField]
     private MonoBehaviour[] _removedBehaviours;
@@ -23,8 +25,12 @@ public class DestroyableObject : MonoBehaviour
 
     private Rigidbody _rigidBody;
 
+
     void Update ()
     {
+        if (_rigidBody != null && !_rigidBody.isKinematic && Globe.SceneToGlobePosition(transform.position).y < 0)
+            Sink();
+
         if (!_exploded && _health < 0)
             Explode();
 
@@ -46,6 +52,12 @@ public class DestroyableObject : MonoBehaviour
     public void Damage(float damage)
     {
         _health -= damage;
+    }
+
+    private void Sink()
+    {
+        Instantiate(ServiceLocator.Locate<Effects>().Splash, transform.position, transform.rotation);
+        Destroy(gameObject);
     }
 
     public void Explode()
@@ -104,15 +116,8 @@ public class DestroyableObject : MonoBehaviour
 
     private void ExplodeAnimation()
     {
-        GameObject explosion = Instantiate(_explosion, transform.position, transform.rotation);
+        GameObject explosion = Instantiate(ServiceLocator.Locate<Effects>().Explosion, transform.position, transform.rotation);
         explosion.GetComponent<ParticleSystem>().Play();
-        StartCoroutine(DestroyExplosion(explosion));
-    }
-
-    private IEnumerator DestroyExplosion(GameObject explosion)
-    {
-        yield return new WaitForSeconds(3);
-        Destroy(explosion);
     }
 
     private List<GameObject> GetAllVisualParts(GameObject gameObject, bool onlyVisualObjects = true)

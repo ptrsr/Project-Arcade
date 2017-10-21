@@ -135,7 +135,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _globePosition: {x: 0, y: 0.48999977, z: 0}
-  _beamable: 0
   _rotateType: 0
   _acceleration: 0.9
   _rotateSpeed: 0

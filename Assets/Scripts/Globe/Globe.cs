@@ -4,12 +4,11 @@ using UnityEngine;
 
 public delegate void OnGlobeChange();
 
-[ExecuteInEditMode]
 [RequireComponent(typeof(MeshRenderer))]
 [RequireComponent(typeof(MeshFilter))]
 public class Globe : MonoBehaviour
 {
-    [SerializeField] [Range(0, 5)]
+    [SerializeField] [Range(0, 6)]
     private int _recursion;
 
     [SerializeField]
@@ -50,13 +49,15 @@ public class Globe : MonoBehaviour
 
     private MeshRenderer _mr;
     private MeshFilter   _mf;
+    private MeshCollider _mc;
     private Material     _mat;
 
-    private bool _updated;
+    private static bool _updated = false;
 
     private Globe()
     {
         ServiceLocator.Provide(this);
+        _updated = false;
     }
 
     private void Start ()
@@ -67,24 +68,13 @@ public class Globe : MonoBehaviour
     private void Update()
     {
         _mat.SetFloat("_timer", Time.time / _waveSpeed);
-
-        if (!_updated)
-        {
-            SetUniforms();
-            _updated = true;
-        }
     }
 
     private void OnValidate()
     {
         CreateWorld();
-        SetRotation();
         OnGlobeChanged();
-
-        _updated = false;
     }
-
-
 
     void OnGlobeChanged()
     {
@@ -95,14 +85,13 @@ public class Globe : MonoBehaviour
             try { change(); } catch { onGlobeChange -= change; }
     }
 
-    private void SetRotation()
+    public void CreateWorld()
     {
-        transform.eulerAngles = new Vector3(0, 0, _rotation);
-    }
+        Mesh mesh = Create(_recursion);
 
-    private void CreateWorld()
-    {
-        MF.mesh = Create(_recursion);
+        MF.mesh = mesh;
+        MC.sharedMesh = mesh;
+
         SetUniforms();
     }
 
@@ -202,7 +191,6 @@ public class Globe : MonoBehaviour
         vertList.Add(new Vector3(-t, 0f, -1f).normalized);
         vertList.Add(new Vector3(-t, 0f, 1f).normalized);
 
-
         // create 20 triangles of the icosahedron
         List<TriangleIndices> faces = new List<TriangleIndices>();
 
@@ -234,7 +222,6 @@ public class Globe : MonoBehaviour
         faces.Add(new TriangleIndices(8, 6, 7));
         faces.Add(new TriangleIndices(9, 8, 1));
 
-
         // refine triangles
         for (int i = 0; i < recursion; i++)
         {
@@ -254,49 +241,30 @@ public class Globe : MonoBehaviour
             faces = faces2;
         }
 
-        Vector3[] vertArray   = new Vector3[faces.Count * 3];
-        Vector3[] normalArray = new Vector3[faces.Count * 3];
-        Vector2[] uvArray     = new Vector2[faces.Count * 3];
-
-        Vector3[] tVertArray = new Vector3[vertList.Count];
-        Vector2[] tUvArray   = new Vector2[vertList.Count];
+        Vector3[] vertArray = new Vector3[vertList.Count];
+        Vector2[] uvArray   = new Vector2[vertList.Count];
 
         for (int i = 0; i < vertList.Count; i++)
         {
             Vector3 vertex = vertList[i];
             Vector2 uv = CalcUV(vertex);
 
-            tVertArray[i] = vertex * CalcHeight(uv);
-            tUvArray[i]   = uv;
+            vertArray[i] = vertex * CalcHeight(uv);
+            uvArray[i]   = uv;
         }
-
 
         int[] triArray = new int[faces.Count * 3];
         for (int i = 0; i < faces.Count; i++)
         {
             TriangleIndices face = faces[i];
 
-            uvArray[i * 3]     = tUvArray[face.v1];
-            uvArray[i * 3 + 1] = tUvArray[face.v2];
-            uvArray[i * 3 + 2] = tUvArray[face.v3];
-
-            vertArray[i * 3]     = tVertArray[face.v1];
-            vertArray[i * 3 + 1] = tVertArray[face.v2];
-            vertArray[i * 3 + 2] = tVertArray[face.v3];
-
-            triArray[i * 3]     = i * 3;
-            triArray[i * 3 + 1] = i * 3 + 1;
-            triArray[i * 3 + 2] = i * 3 + 2;
-
-            Vector3 normal = Vector3.Cross(tVertArray[face.v2] - tVertArray[face.v1], tVertArray[face.v3] - tVertArray[face.v1]).normalized;
-
-            for (int j = 0; j < 3; j++)
-                normalArray[i * 3 + j] = normal;
+            triArray[i * 3]     = face.v1;
+            triArray[i * 3 + 1] = face.v2;
+            triArray[i * 3 + 2] = face.v3;
         }
 
         mesh.vertices  = vertArray;
         mesh.triangles = triArray;
-        mesh.normals   = normalArray;
         mesh.uv        = uvArray;
 
         mesh.RecalculateBounds();
@@ -316,7 +284,6 @@ public class Globe : MonoBehaviour
     }
 
     #endregion
-
 
 
     #region GETTERS / SETTERS
@@ -342,6 +309,17 @@ public class Globe : MonoBehaviour
         }
     }
 
+    private MeshCollider MC
+    {
+        get
+        {
+            if (_mc == null)
+                _mc = GetComponent<MeshCollider>();
+
+            return _mc;
+        }
+    }
+
     public float Radius
     {
         get { return _radius; }
@@ -362,18 +340,31 @@ public class Globe : MonoBehaviour
         get { return _levelWidth; }
     }
 
+    public bool Updated
+    {
+        get { return _updated;  }
+        set { _updated = value; }
+    }
+
     public float WaterLevel
     {
         get { return _radius + _waterLevel; }
     }
 
-    public static Vector3 SceneToGlobePosition(Vector3 scenePosition, bool relative = false)
+    public static Vector3 SceneToGlobePosition(Vector3 scenePosition)
     {
-        float radius = ServiceLocator.Locate<Globe>().Radius;
-        Vector3 globePosition = new Vector3(Mathf.Atan2(scenePosition.x, scenePosition.y), scenePosition.magnitude, Mathf.Sin(scenePosition.z / radius));
+        Globe globe = ServiceLocator.Locate<Globe>();
 
-        if (relative)
-            globePosition.y -= radius;
+        Vector3 normalizedScenePosition = scenePosition.normalized;
+        Vector3 rayGlobePos = normalizedScenePosition * (globe.MaxHeight + 1);
+        Vector3 globePosition = new Vector3(Mathf.Atan2(normalizedScenePosition.x, normalizedScenePosition.y), scenePosition.magnitude, Mathf.Sin(normalizedScenePosition.z));
+
+        RaycastHit hit;
+
+        if (Physics.Raycast(rayGlobePos, -normalizedScenePosition, out hit, globe.MaxHeight - globe.WaterLevel + 1, 1 << 10))
+            globePosition.y = scenePosition.magnitude - hit.point.magnitude;
+        else
+            globePosition.y = scenePosition.magnitude - globe.WaterLevel;
 
         return globePosition;
     }

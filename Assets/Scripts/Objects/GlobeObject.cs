@@ -7,13 +7,6 @@ public class GlobeObject : MonoBehaviour
     [SerializeField]
     protected Vector3 _globePosition;
 
-    [SerializeField]
-    private bool _beamable = false;
-
-    private bool
-        _beamed = false,
-        _kinematic = false;
-
     private Globe _globe;
 
     public GlobeObject()
@@ -68,35 +61,6 @@ public class GlobeObject : MonoBehaviour
                 _globe = ServiceLocator.Locate<Globe>();
 
             return _globe;
-        }
-    }
-
-    public bool Beamable
-    {
-        get { return _beamable; }
-    }
-
-    public bool Beamed
-    {
-        get { return _beamed;  }
-        set
-        {
-            _beamed = value;
-            Kinematic = value;
-        }
-    }
-
-    public bool Kinematic
-    {
-        get { return _kinematic; }
-        set
-        {
-            _kinematic = value;
-
-            Rigidbody rb = GetComponent<Rigidbody>();
-
-            if (rb != null)
-                rb.isKinematic = value;
         }
     }
 

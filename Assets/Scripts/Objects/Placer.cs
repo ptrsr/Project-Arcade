@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEditor;
 
 [ExecuteInEditMode] [CustomEditor(typeof(GlobeObject), true)]
-public class GlobeObjectPlacer : Editor
+public class Placer : Editor
 {
     private bool _placing = false;
 

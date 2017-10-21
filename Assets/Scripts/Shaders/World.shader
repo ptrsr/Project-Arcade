@@ -27,7 +27,6 @@ Shader "custom/globeFX"
 			{
 				half4	vertex	:	POSITION;
 				float2	uv		:	TEXCOORD0;
-
 			};
              
 			struct v2g
