@@ -29,7 +29,7 @@ public class Tank : GroundEnemy
         if (RotateTo(move, true, 10))
             go = true;
 
-        if (!CheckInRange() || !go)
+        if (!CheckInRange(move) || !go)
             return;
 
         Move(move);

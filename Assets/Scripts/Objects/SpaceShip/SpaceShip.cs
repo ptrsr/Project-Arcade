@@ -41,7 +41,7 @@ public class SpaceShip : MovingObject
 
         if (_weaponComponent != null)
         {
-            _weaponComponent.Aim(new Vector2(move2D.x * MovementSpeed.x, move2D.y * MovementSpeed.y));
+            _weaponComponent.Aim(new Vector2(move2D.x * MovementSpeed.x, move2D.y * MovementSpeed.z));
 
             if (Input.GetKey(KeyCode.Space))
                 _weaponComponent.Fire();

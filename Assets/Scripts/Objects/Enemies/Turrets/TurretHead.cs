@@ -112,6 +112,11 @@ public class TurretHead : MonoBehaviour
         return Vector3.Distance(transform.position, target.ScenePosition) < _range;
     }
 
+    private void OnDrawGizmosSelected()
+    {
+
+    }
+
     protected float ReloadStatus
     {
         get { return 1 - _reloadTime / _reloadSpeed; }

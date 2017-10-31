@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor.Callbacks;
+using System;
 
 public delegate void OnGlobeChange();
 
@@ -8,18 +10,67 @@ public delegate void OnGlobeChange();
 [RequireComponent(typeof(MeshFilter))]
 public class Globe : MonoBehaviour
 {
-    [SerializeField] [Range(0, 6)]
-    private int _recursion;
+    [Serializable]
+    struct GlobeSettings
+    {
+        [Range(0, 6)]
+         public int recursion;
+
+        public float
+            radius,
+            heightMulti;
+
+        public Texture2D
+            heightMap,
+            waveMap;
+
+        public override bool Equals(object obj)
+        {
+            if (obj.GetType() != typeof(GlobeSettings))
+                return false;
+
+            GlobeSettings other = (GlobeSettings)obj;
+
+            return recursion == other.recursion &&
+                   radius == other.radius &&
+                   heightMulti == other.heightMulti &&
+                   heightMap == other.heightMap &&
+                   waveMap == other.waveMap;
+        }
+
+        public static bool operator != (GlobeSettings A, GlobeSettings B)
+        {
+            return !A.Equals(B);
+        }
+
+        public static bool operator == (GlobeSettings A, GlobeSettings B)
+        {
+            return A.Equals(B);
+        }
+    }
+
+    [SerializeField]
+    private Shader _shader;
+
+    [SerializeField]
+    private GlobeSettings _globeSettings;
+    private static GlobeSettings _backup;
+
+    [SerializeField]
+    private Color
+        _grass,
+        _water,
+        _sand,
+        _paintColor;
 
     [SerializeField]
     private float
-        _radius,
-        _heightMulti,
         _waterLevel,
         _waveHeight,
         _waveMulti,
         _waveSpeed,
-        _specular;
+        _specular,
+        _test;
 
     [SerializeField] [Range(0, 1)]
     private float _ambient;
@@ -27,15 +78,8 @@ public class Globe : MonoBehaviour
     [SerializeField]
     private Texture2D
         _heightMap,
-        _waveMap;
-
-    [SerializeField]
-    private Shader _shader;
-
-    [SerializeField]
-    private Color
-        _grass,
-        _water;
+        _waveMap,
+        _paintMap;
 
     #region LEVEL SETTINGS
     public static event OnGlobeChange onGlobeChange;
@@ -52,12 +96,11 @@ public class Globe : MonoBehaviour
     private MeshCollider _mc;
     private Material     _mat;
 
-    private static bool _updated = false;
+
 
     private Globe()
     {
         ServiceLocator.Provide(this);
-        _updated = false;
     }
 
     private void Start ()
@@ -68,11 +111,18 @@ public class Globe : MonoBehaviour
     private void Update()
     {
         _mat.SetFloat("_timer", Time.time / _waveSpeed);
+        _mat.SetFloat("_test", _test);
     }
 
     private void OnValidate()
     {
-        CreateWorld();
+        if (_globeSettings != _backup)
+        {
+            CreateWorld();
+            _backup = _globeSettings;
+        }
+
+        SetUniforms();
         OnGlobeChanged();
     }
 
@@ -87,18 +137,17 @@ public class Globe : MonoBehaviour
 
     public void CreateWorld()
     {
-        Mesh mesh = Create(_recursion);
+        Mesh mesh = Create(_globeSettings.recursion);
 
         MF.mesh = mesh;
         MC.sharedMesh = mesh;
 
-        SetUniforms();
+        _paintMap = CreateWorldTexture(mesh.vertexCount);
     }
 
     private void SetUniforms()
     {
         _mat = new Material(_shader);
-
         _mat.shader = _shader;
 
         _mat.SetFloat("_ambient", _ambient);
@@ -106,13 +155,51 @@ public class Globe : MonoBehaviour
 
         _mat.SetColor("_grass", _grass);
         _mat.SetColor("_water", _water);
+        _mat.SetColor("_sand", _sand);
 
-        _mat.SetFloat("_waterLevel", _waterLevel + _radius);
+
+        _mat.SetFloat("_waterLevel", _waterLevel + _globeSettings.radius);
         _mat.SetFloat("_waveMulti", _waveMulti);
-        _mat.SetFloat("_waveHeight", _waveHeight * _radius);
+        _mat.SetFloat("_waveHeight", _waveHeight * _globeSettings.radius);
 
         _mat.SetTexture("_waveMap", _waveMap);
+        _mat.SetTexture("_paintMap", _paintMap);
+
+        _mat.SetVector("_paintMapSize", new Vector2(_paintMap.width, _paintMap.height));
+
         MR.material = _mat;
+    }
+
+    public void Draw(int[] vertices)
+    {
+        foreach (int vertice in vertices)
+        {
+            int row = vertice / _paintMap.width;
+            int col = vertice % _paintMap.width;
+
+            _paintMap.SetPixel(col, row, _paintColor);
+        }
+
+        _paintMap.Apply();
+        _mat.SetTexture("_paintMap", _paintMap);
+
+    }
+
+    private Texture2D CreateWorldTexture(int vertices)
+    {
+        int width = (int)Math.Sqrt(vertices);
+        int height = width + 1;
+
+        Texture2D paintMap = new Texture2D(width, height);
+        Color[] block = new Color[width * height];
+
+        for (int i = 0; i < block.Length; i++)
+            block[i] = Color.clear;
+
+        paintMap.SetPixels(0, 0, paintMap.width, paintMap.height, block);
+        paintMap.Apply();
+
+        return paintMap;
     }
 
     #region SPHERE CREATION
@@ -274,7 +361,7 @@ public class Globe : MonoBehaviour
 
     private float CalcHeight(Vector2 uv)
     {
-        return _radius + _heightMap.GetPixel((int)(uv.x * _heightMap.width), (int)(uv.y * _heightMap.height)).grayscale * (_heightMulti * _radius);
+        return Radius + _heightMap.GetPixel((int)(uv.x * _heightMap.width), (int)(uv.y * _heightMap.height)).grayscale * (_globeSettings.heightMulti * Radius);
     }
 
     private Vector2 CalcUV(Vector3 vertice)
@@ -322,12 +409,12 @@ public class Globe : MonoBehaviour
 
     public float Radius
     {
-        get { return _radius; }
+        get { return _globeSettings.radius; }
     }
 
     public float MaxHeight
     {
-        get { return _radius + _heightMulti * _radius; }
+        get { return Radius + _globeSettings.heightMulti * Radius; }
     }
 
     public float Gravity
@@ -340,15 +427,9 @@ public class Globe : MonoBehaviour
         get { return _levelWidth; }
     }
 
-    public bool Updated
-    {
-        get { return _updated;  }
-        set { _updated = value; }
-    }
-
     public float WaterLevel
     {
-        get { return _radius + _waterLevel; }
+        get { return Radius + _waterLevel; }
     }
 
     public static Vector3 SceneToGlobePosition(Vector3 scenePosition)
@@ -384,7 +465,7 @@ public class Globe : MonoBehaviour
 
         Vector3 GlobeDown = -rayPos.normalized;
 
-        float raylength = Application.isEditor ? 10000 : globe.MaxHeight - globe.WaterLevel + 1;
+        float raylength = Application.isPlaying ? globe.MaxHeight - globe.WaterLevel + 1 : 10000;
 
         RaycastHit tempHit;
         if (Physics.Raycast(rayPos, GlobeDown, out tempHit, raylength, 1 << 10))
@@ -400,5 +481,9 @@ public class Globe : MonoBehaviour
     }
     #endregion
 
-
+    [DidReloadScripts]
+    private static void OnSceneReload()
+    {
+        ServiceLocator.Locate<Globe>().SetUniforms();
+    }
 }

@@ -7,12 +7,22 @@ using UnityEngine;
 public class Beam : Weapon
 {
     [SerializeField]
+    private Shader _shader;
+
+    [SerializeField]
+    private Color _color;
+
+    [SerializeField]
     private float
         _beamSpeed = 0.01f,
-        _rotateSpeed = 5;
+        _rotateSpeed = 5,
+        _effectSpeed = 1,
+        _effectMulti = 1;
+
+    private Material _mat;
+    private MeshRenderer _mr;
 
     private List<GravityObject> _beamableObjects;
-    private MeshRenderer _mr;
     private Transform _attachmentPoint;
 
     private Vector2 _move;
@@ -20,14 +30,36 @@ public class Beam : Weapon
 
     private void Start()
     {
+
         _mr = GetComponent<MeshRenderer>();
         _mr.enabled = false;
+        _mat = InitShader(_shader);
+        _mr.material = _mat;
 
         _attachmentPoint = transform.parent;
 
         _beamableObjects = new List<GravityObject>();
 
         transform.localEulerAngles = new Vector3(90, 0, 0);
+    }
+
+    private Material InitShader(Shader shader)
+    {
+        Material mat = new Material(shader);
+        SetUniforms(mat);
+        return mat;
+    }
+
+    private void OnValidate()
+    {
+        if (Application.isPlaying)
+            SetUniforms(_mat);
+    }
+
+    private void SetUniforms(Material mat)
+    {
+        mat.SetColor("_color", _color);
+        mat.SetFloat("_effectMulti", _effectMulti);
     }
 
     public override void Aim(Vector2 movement)
@@ -37,6 +69,8 @@ public class Beam : Weapon
 
     protected override void OnFire()
     {
+        _mat.SetFloat("_time", Time.fixedTime * _effectSpeed);
+
         Vector3 deltaPosition = transform.position - _lastPosition;
 
         foreach (GravityObject gObject in _beamableObjects)

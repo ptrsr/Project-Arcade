@@ -93,10 +93,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a22b5a2f24efb524bbe4e3924b819e55, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _maxAngle: 5
+  _shader: {fileID: 4800000, guid: 0f791dc223a05af40a988b429396a6ab, type: 3}
+  _maxAngle: 1
   _rotateSpeed: 1
   _diameter: 0.46
   _dps: 3
+  _effectMulti: 4
+  _timeMulti: 100
+  _darken: 1.5
+  _color: {r: 0.07586217, g: 1, b: 0, a: 1}
 --- !u!136 &136123895553484140
 CapsuleCollider:
   m_ObjectHideFlags: 1

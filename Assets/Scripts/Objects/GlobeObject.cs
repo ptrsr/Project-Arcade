@@ -16,7 +16,8 @@ public class GlobeObject : MonoBehaviour
 
     private void OnGlobeChanged()
     {
-        GlobePosition = GlobePosition;
+        if (!Application.isPlaying)
+            GlobePosition = GlobePosition;
     }
 
     public void SetPosition(Vector3 ScenePosition)
@@ -29,7 +30,6 @@ public class GlobeObject : MonoBehaviour
     protected virtual void OnValidate()
     {
         GlobePosition = GlobePosition;
-        transform.up = GlobeUp;
     }
 
     public virtual Vector3 GlobePosition
@@ -39,8 +39,11 @@ public class GlobeObject : MonoBehaviour
         {
             _globePosition = value;
 
-            transform.position = Globe.GlobeToScenePosition(value);
-            transform.up = GlobeUp;
+            Vector3 fwd = transform.forward;
+            Vector3 normal;
+
+            transform.position = Globe.GlobeToScenePosition(value, out normal);
+            transform.rotation = Quaternion.LookRotation(fwd, normal);
         }
     }
 

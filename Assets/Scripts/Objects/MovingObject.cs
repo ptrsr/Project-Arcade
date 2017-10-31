@@ -102,7 +102,7 @@ public class MovingObject : GlobeObject
         get { return _lastMove; }
     }
 
-    public Vector2 MovementSpeed
+    public Vector3 MovementSpeed
     {
         get { return _movementSpeed;  }
         set { _movementSpeed = value; }
