@@ -52,6 +52,9 @@ Shader "custom/post_fx"
 			uniform float _levelWidth;
 			uniform float _borderFade;
 
+			float _skyMulti;
+
+
 			fixed4 frag (v2f i) : SV_Target
 			{
 				// scene render
@@ -66,7 +69,7 @@ Shader "custom/post_fx"
 				float3 worldPos = worldPosition (linearDepth, i.ray);
 
 				if (linearDepth == 1)
-					return float4(skyBox(worldPos), 1);
+					return float4(skyBox(worldPosition(linearDepth, i.ray * _skyMulti)), 1);
 					//return float4(0,0,1, 1);
 
 				float fade = 1 - clamp(_levelWidth - abs(worldPos.z) + (abs(worldPos.z) - _levelWidth) * _borderFade, 0, 1);
@@ -82,28 +85,27 @@ Shader "custom/post_fx"
 				return pos;
 			}
 
-			float4 _skyColor;
-			float4 _duskColor;
-
-			float _skyBegin;
-			float _duskBegin;
-
-			float _duskMulti;
-			float _skyMulti;
-
+			float4 _gradient[10];
+			float _colorKeys;
 
 			float3 skyBox(float3 worldPos)
 			{
-				float3 finalColor;
 
-				float3 pos = worldPos / 200;
+				float2 pos = normalize(worldPos.xy);
 
-				float3 skyColor = clamp(pos.y - _skyBegin, 0, 1) * _skyColor * _skyMulti * (1 - _duskMulti);
-				float3 duskColor = clamp(pos.y - _duskBegin, 0, 1) * _duskColor * _duskMulti;	
+				float rot = (dot(pos, float2(0,-1)) + 1) / 2;
 
-			   finalColor =  skyColor + duskColor;
-				
-			   return finalColor;
+				for (int i = 0; i < _colorKeys; i++)
+				{
+					if (_gradient[i].a < rot)
+						continue;
+
+					if (i == 0)
+						return _gradient[0].rgb;
+
+					return lerp(_gradient[i - 1].rgb, _gradient[i].rgb,  (1.0 / (_gradient[i].a - _gradient[i-1].a)) * (rot - _gradient[i - 1].a));
+				}
+				return _gradient[_colorKeys - 1].rgb;
 			}
 
 
