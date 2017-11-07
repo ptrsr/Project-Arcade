@@ -12,7 +12,12 @@ public class PostFX : MonoBehaviour
     private float _borderFade = 1;
 
     [SerializeField]
-    float _skyMulti;
+    private float
+        _radius,
+        _qAtmosFallOff,
+        _lAtmosFallOff,
+        _test1,
+        _test2;
 
     [SerializeField]
     Gradient _gradient;
@@ -38,13 +43,10 @@ public class PostFX : MonoBehaviour
         SetShaderUniforms();
     }
 
-    private void Update()
-    {
-    }
-
     private void OnValidate()
     {
         SetShaderUniforms();
+
     }
 
     private void SetShaderUniforms()
@@ -55,7 +57,14 @@ public class PostFX : MonoBehaviour
         _mat.SetFloat("_levelWidth", _globe.LevelWidth);
         _mat.SetFloat("_borderFade", _borderFade);
 
-        _mat.SetFloat("_skyMulti", _skyMulti);
+        _mat.SetFloat("_radius", _radius);
+        _mat.SetFloat("_lAtmosFallOff", _qAtmosFallOff);
+        _mat.SetFloat("_qAtmosFallOff", _lAtmosFallOff);
+
+        _mat.SetFloat("_test1", _test1);
+        _mat.SetFloat("_test2", _test2);
+
+        _mat.SetVector("_camPos", transform.position);
 
         SetGradient();
     }

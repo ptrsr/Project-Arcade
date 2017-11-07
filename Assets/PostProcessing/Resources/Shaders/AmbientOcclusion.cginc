@@ -334,7 +334,7 @@ half4 FragBlur(VaryingsMultitex i) : SV_Target
 
     // High quality 7-tap Gaussian with adaptive sampling
 
-    fixed4 p0  = tex2D(_MainTex, i.uvSPR);
+    fixed4 l0  = tex2D(_MainTex, i.uvSPR);
     fixed4 p1a = tex2D(_MainTex, i.uvSPR - delta);
     fixed4 p1b = tex2D(_MainTex, i.uvSPR + delta);
     fixed4 p2a = tex2D(_MainTex, i.uvSPR - delta * 2.0);
@@ -345,7 +345,7 @@ half4 FragBlur(VaryingsMultitex i) : SV_Target
 #if defined(BLUR_SAMPLE_CENTER_NORMAL)
     fixed3 n0 = SampleNormal(i.uvSPR);
 #else
-    fixed3 n0 = GetPackedNormal(p0);
+    fixed3 n0 = GetPackedNormal(l0);
 #endif
 
     half w0  = 0.37004405286;
@@ -357,7 +357,7 @@ half4 FragBlur(VaryingsMultitex i) : SV_Target
     half w3b = CompareNormal(n0, GetPackedNormal(p3b)) * 0.11453744493;
 
     half s;
-    s  = GetPackedAO(p0)  * w0;
+    s  = GetPackedAO(l0)  * w0;
     s += GetPackedAO(p1a) * w1a;
     s += GetPackedAO(p1b) * w1b;
     s += GetPackedAO(p2a) * w2a;
@@ -370,7 +370,7 @@ half4 FragBlur(VaryingsMultitex i) : SV_Target
 #else
 
     // Fater 5-tap Gaussian with linear sampling
-    fixed4 p0  = tex2D(_MainTex, i.uvSPR);
+    fixed4 l0  = tex2D(_MainTex, i.uvSPR);
     fixed4 p1a = tex2D(_MainTex, i.uvSPR - delta * 1.3846153846);
     fixed4 p1b = tex2D(_MainTex, i.uvSPR + delta * 1.3846153846);
     fixed4 p2a = tex2D(_MainTex, i.uvSPR - delta * 3.2307692308);
@@ -379,7 +379,7 @@ half4 FragBlur(VaryingsMultitex i) : SV_Target
 #if defined(BLUR_SAMPLE_CENTER_NORMAL)
     fixed3 n0 = SampleNormal(i.uvSPR);
 #else
-    fixed3 n0 = GetPackedNormal(p0);
+    fixed3 n0 = GetPackedNormal(l0);
 #endif
 
     half w0  = 0.2270270270;
@@ -389,7 +389,7 @@ half4 FragBlur(VaryingsMultitex i) : SV_Target
     half w2b = CompareNormal(n0, GetPackedNormal(p2b)) * 0.0702702703;
 
     half s;
-    s  = GetPackedAO(p0)  * w0;
+    s  = GetPackedAO(l0)  * w0;
     s += GetPackedAO(p1a) * w1a;
     s += GetPackedAO(p1b) * w1b;
     s += GetPackedAO(p2a) * w2a;
@@ -413,13 +413,13 @@ half EncodeAO(half x)
 // Geometry-aware bilateral filter (single pass/small kernel)
 half BlurSmall(sampler2D tex, float2 uv, float2 delta)
 {
-    fixed4 p0 = tex2D(tex, uv);
+    fixed4 l0 = tex2D(tex, uv);
     fixed4 p1 = tex2D(tex, uv + float2(-delta.x, -delta.y));
     fixed4 p2 = tex2D(tex, uv + float2(+delta.x, -delta.y));
     fixed4 p3 = tex2D(tex, uv + float2(-delta.x, +delta.y));
     fixed4 p4 = tex2D(tex, uv + float2(+delta.x, +delta.y));
 
-    fixed3 n0 = GetPackedNormal(p0);
+    fixed3 n0 = GetPackedNormal(l0);
 
     half w0 = 1.0;
     half w1 = CompareNormal(n0, GetPackedNormal(p1));
@@ -428,7 +428,7 @@ half BlurSmall(sampler2D tex, float2 uv, float2 delta)
     half w4 = CompareNormal(n0, GetPackedNormal(p4));
 
     half s;
-    s  = GetPackedAO(p0) * w0;
+    s  = GetPackedAO(l0) * w0;
     s += GetPackedAO(p1) * w1;
     s += GetPackedAO(p2) * w2;
     s += GetPackedAO(p3) * w3;

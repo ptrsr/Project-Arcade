@@ -511,12 +511,12 @@ Shader "Hidden/Post FX/Screen Space Reflection"
             float2 smallTexSizeInv = 1.0 / smallTexSize;
 
 
-            float2 p0 = smallPixelPosi * smallTexSizeInv;
+            float2 l0 = smallPixelPosi * smallTexSizeInv;
             float2 p3 = (smallPixelPosi + float2(1.0, 1.0)) * smallTexSizeInv;
-            float2 p1 = float2(p3.x, p0.y);
-            float2 p2 = float2(p0.x, p3.y);
+            float2 p1 = float2(p3.x, l0.y);
+            float2 p2 = float2(l0.x, p3.y);
 
-            float4 V0 = getReflectionValue(p0.xy, mip);
+            float4 V0 = getReflectionValue(l0.xy, mip);
             float4 V1 = getReflectionValue(p1.xy, mip);
             float4 V2 = getReflectionValue(p2.xy, mip);
             float4 V3 = getReflectionValue(p3.xy, mip);
@@ -532,7 +532,7 @@ Shader "Hidden/Post FX/Screen Space Reflection"
             float2 fullTexSize = _ReflectionBufferSize;
             float2 fullTexSizeInv = 1.0 / fullTexSize;
 
-            float4 hiP0 = float4(snapToTexelCenter(p0, fullTexSize, fullTexSizeInv), 0,0);
+            float4 hil0 = float4(snapToTexelCenter(l0, fullTexSize, fullTexSizeInv), 0,0);
             float4 hiP3 = float4(snapToTexelCenter(p3, fullTexSize, fullTexSizeInv), 0,0);
             float4 hiP1 = float4(snapToTexelCenter(p1, fullTexSize, fullTexSizeInv), 0,0);
             float4 hiP2 = float4(snapToTexelCenter(p2, fullTexSize, fullTexSizeInv), 0,0);
@@ -540,12 +540,12 @@ Shader "Hidden/Post FX/Screen Space Reflection"
             float4 tempCenter = tex2Dlod(_NormalAndRoughnessTexture, float4(tsP, 0, 0));
             float3 n  = tempCenter.xyz * 2 - 1;
 
-            float4 temp0 = tex2Dlod(_NormalAndRoughnessTexture, hiP0);
+            float4 teml0 = tex2Dlod(_NormalAndRoughnessTexture, hil0);
             float4 temp1 = tex2Dlod(_NormalAndRoughnessTexture, hiP1);
             float4 temp2 = tex2Dlod(_NormalAndRoughnessTexture, hiP2);
             float4 temp3 = tex2Dlod(_NormalAndRoughnessTexture, hiP3);
 
-            float3 n0 = temp0.xyz * 2 - 1;
+            float3 n0 = teml0.xyz * 2 - 1;
             float3 n1 = temp1.xyz * 2 - 1;
             float3 n2 = temp2.xyz * 2 - 1;
             float3 n3 = temp3.xyz * 2 - 1;
@@ -556,7 +556,7 @@ Shader "Hidden/Post FX/Screen Space Reflection"
             a3 *= normalWeight(n, n3);
 
             float r = tempCenter.a;
-            float r0 = temp0.a;
+            float r0 = teml0.a;
             float r1 = temp1.a;
             float r2 = temp2.a;
             float r3 = temp3.a;
@@ -594,12 +594,12 @@ Shader "Hidden/Post FX/Screen Space Reflection"
             float2 smallTexSizeInv = 1.0 / smallTexSize;
 
 
-            float2 p0 = smallPixelPosi * smallTexSizeInv;
+            float2 l0 = smallPixelPosi * smallTexSizeInv;
             float2 p3 = (smallPixelPosi + float2(1.0, 1.0)) * smallTexSizeInv;
-            float2 p1 = float2(p3.x, p0.y);
-            float2 p2 = float2(p0.x, p3.y);
+            float2 p1 = float2(p3.x, l0.y);
+            float2 p2 = float2(l0.x, p3.y);
 
-            float4 V0 = getReflectionValue(p0.xy, mip);
+            float4 V0 = getReflectionValue(l0.xy, mip);
             float4 V1 = getReflectionValue(p1.xy, mip);
             float4 V2 = getReflectionValue(p2.xy, mip);
             float4 V3 = getReflectionValue(p3.xy, mip);
@@ -732,12 +732,12 @@ Shader "Hidden/Post FX/Screen Space Reflection"
             float2 tsP = i.uv2.xy;
             float2 lastTexSize = mipToSize(_LastMip);
             float2 lastTexSizeInv = 1.0 / lastTexSize;
-            float2 p00 = snapToTexelCenter(tsP, lastTexSize, lastTexSizeInv);
-            float2 p11 = p00 + lastTexSizeInv;
+            float2 l00 = snapToTexelCenter(tsP, lastTexSize, lastTexSizeInv);
+            float2 p11 = l00 + lastTexSizeInv;
 
             return min(
-                min(tex2D(_MainTex, p00), tex2D(_MainTex, p11)),
-                min(tex2D(_MainTex, float2(p00.x, p11.y)), tex2D(_MainTex, float2(p11.x, p00.y)))
+                min(tex2D(_MainTex, l00), tex2D(_MainTex, p11)),
+                min(tex2D(_MainTex, float2(l00.x, p11.y)), tex2D(_MainTex, float2(p11.x, l00.y)))
             );
         }
 

@@ -44,7 +44,7 @@ half3 NeutralTonemap(half3 x, half4 params1, half4 params2)
 
 //
 // Filmic tonemapping (ACES fitting, unless TONEMAPPING_USE_FULL_ACES is set to 1)
-// Input is ACES2065-1 (AP0 w/ linear encoding)
+// Input is ACES2065-1 (Al0 w/ linear encoding)
 //
 half3 FilmicTonemap(half3 aces)
 {

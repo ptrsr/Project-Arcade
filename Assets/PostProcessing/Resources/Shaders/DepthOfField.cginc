@@ -177,7 +177,7 @@ half4 FragPrefilter(VaryingsDOF i) : SV_Target
 // Bokeh filter with disk-shaped kernels
 half4 FragBlur(VaryingsDOF i) : SV_Target
 {
-    half4 samp0 = DOF_TEX2D(_MainTex, i.uv);
+    half4 saml0 = DOF_TEX2D(_MainTex, i.uv);
 
     half4 bgAcc = 0.0; // Background: far field bokeh
     half4 fgAcc = 0.0; // Foreground: near field bokeh
@@ -192,7 +192,7 @@ half4 FragBlur(VaryingsDOF i) : SV_Target
 
         // BG: Compare CoC of the current sample and the center sample
         // and select smaller one.
-        half bgCoC = max(min(samp0.a, samp.a), 0.0);
+        half bgCoC = max(min(saml0.a, samp.a), 0.0);
 
         // Compare the CoC to the sample distance.
         // Add a small margin to smooth out.
@@ -215,7 +215,7 @@ half4 FragBlur(VaryingsDOF i) : SV_Target
 
     // BG: Calculate the alpha value only based on the center CoC.
     // This is a rather aggressive approximation but provides stable results.
-    bgAcc.a = smoothstep(_MainTex_TexelSize.y, _MainTex_TexelSize.y * 2.0, samp0.a);
+    bgAcc.a = smoothstep(_MainTex_TexelSize.y, _MainTex_TexelSize.y * 2.0, saml0.a);
 
     // FG: Normalize the total of the weights.
     fgAcc.a *= UNITY_PI / kSampleCount;

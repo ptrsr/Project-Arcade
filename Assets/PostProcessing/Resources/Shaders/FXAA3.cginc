@@ -415,14 +415,14 @@ FXAA QUALITY - MEDIUM DITHER PRESETS
 ============================================================================*/
 #if (FXAA_QUALITY__PRESET == 10)
 #define FXAA_QUALITY__PS 3
-#define FXAA_QUALITY__P0 1.5
+#define FXAA_QUALITY__l0 1.5
 #define FXAA_QUALITY__P1 3.0
 #define FXAA_QUALITY__P2 12.0
 #endif
 /*--------------------------------------------------------------------------*/
 #if (FXAA_QUALITY__PRESET == 11)
 #define FXAA_QUALITY__PS 4
-#define FXAA_QUALITY__P0 1.0
+#define FXAA_QUALITY__l0 1.0
 #define FXAA_QUALITY__P1 1.5
 #define FXAA_QUALITY__P2 3.0
 #define FXAA_QUALITY__P3 12.0
@@ -430,7 +430,7 @@ FXAA QUALITY - MEDIUM DITHER PRESETS
 /*--------------------------------------------------------------------------*/
 #if (FXAA_QUALITY__PRESET == 12)
 #define FXAA_QUALITY__PS 5
-#define FXAA_QUALITY__P0 1.0
+#define FXAA_QUALITY__l0 1.0
 #define FXAA_QUALITY__P1 1.5
 #define FXAA_QUALITY__P2 2.0
 #define FXAA_QUALITY__P3 4.0
@@ -439,7 +439,7 @@ FXAA QUALITY - MEDIUM DITHER PRESETS
 /*--------------------------------------------------------------------------*/
 #if (FXAA_QUALITY__PRESET == 13)
 #define FXAA_QUALITY__PS 6
-#define FXAA_QUALITY__P0 1.0
+#define FXAA_QUALITY__l0 1.0
 #define FXAA_QUALITY__P1 1.5
 #define FXAA_QUALITY__P2 2.0
 #define FXAA_QUALITY__P3 2.0
@@ -449,7 +449,7 @@ FXAA QUALITY - MEDIUM DITHER PRESETS
 /*--------------------------------------------------------------------------*/
 #if (FXAA_QUALITY__PRESET == 14)
 #define FXAA_QUALITY__PS 7
-#define FXAA_QUALITY__P0 1.0
+#define FXAA_QUALITY__l0 1.0
 #define FXAA_QUALITY__P1 1.5
 #define FXAA_QUALITY__P2 2.0
 #define FXAA_QUALITY__P3 2.0
@@ -460,7 +460,7 @@ FXAA QUALITY - MEDIUM DITHER PRESETS
 /*--------------------------------------------------------------------------*/
 #if (FXAA_QUALITY__PRESET == 15)
 #define FXAA_QUALITY__PS 8
-#define FXAA_QUALITY__P0 1.0
+#define FXAA_QUALITY__l0 1.0
 #define FXAA_QUALITY__P1 1.5
 #define FXAA_QUALITY__P2 2.0
 #define FXAA_QUALITY__P3 2.0
@@ -475,14 +475,14 @@ FXAA QUALITY - LOW DITHER PRESETS
 ============================================================================*/
 #if (FXAA_QUALITY__PRESET == 20)
 #define FXAA_QUALITY__PS 3
-#define FXAA_QUALITY__P0 1.5
+#define FXAA_QUALITY__l0 1.5
 #define FXAA_QUALITY__P1 2.0
 #define FXAA_QUALITY__P2 8.0
 #endif
 /*--------------------------------------------------------------------------*/
 #if (FXAA_QUALITY__PRESET == 21)
 #define FXAA_QUALITY__PS 4
-#define FXAA_QUALITY__P0 1.0
+#define FXAA_QUALITY__l0 1.0
 #define FXAA_QUALITY__P1 1.5
 #define FXAA_QUALITY__P2 2.0
 #define FXAA_QUALITY__P3 8.0
@@ -490,7 +490,7 @@ FXAA QUALITY - LOW DITHER PRESETS
 /*--------------------------------------------------------------------------*/
 #if (FXAA_QUALITY__PRESET == 22)
 #define FXAA_QUALITY__PS 5
-#define FXAA_QUALITY__P0 1.0
+#define FXAA_QUALITY__l0 1.0
 #define FXAA_QUALITY__P1 1.5
 #define FXAA_QUALITY__P2 2.0
 #define FXAA_QUALITY__P3 2.0
@@ -499,7 +499,7 @@ FXAA QUALITY - LOW DITHER PRESETS
 /*--------------------------------------------------------------------------*/
 #if (FXAA_QUALITY__PRESET == 23)
 #define FXAA_QUALITY__PS 6
-#define FXAA_QUALITY__P0 1.0
+#define FXAA_QUALITY__l0 1.0
 #define FXAA_QUALITY__P1 1.5
 #define FXAA_QUALITY__P2 2.0
 #define FXAA_QUALITY__P3 2.0
@@ -509,7 +509,7 @@ FXAA QUALITY - LOW DITHER PRESETS
 /*--------------------------------------------------------------------------*/
 #if (FXAA_QUALITY__PRESET == 24)
 #define FXAA_QUALITY__PS 7
-#define FXAA_QUALITY__P0 1.0
+#define FXAA_QUALITY__l0 1.0
 #define FXAA_QUALITY__P1 1.5
 #define FXAA_QUALITY__P2 2.0
 #define FXAA_QUALITY__P3 2.0
@@ -520,7 +520,7 @@ FXAA QUALITY - LOW DITHER PRESETS
 /*--------------------------------------------------------------------------*/
 #if (FXAA_QUALITY__PRESET == 25)
 #define FXAA_QUALITY__PS 8
-#define FXAA_QUALITY__P0 1.0
+#define FXAA_QUALITY__l0 1.0
 #define FXAA_QUALITY__P1 1.5
 #define FXAA_QUALITY__P2 2.0
 #define FXAA_QUALITY__P3 2.0
@@ -532,7 +532,7 @@ FXAA QUALITY - LOW DITHER PRESETS
 /*--------------------------------------------------------------------------*/
 #if (FXAA_QUALITY__PRESET == 26)
 #define FXAA_QUALITY__PS 9
-#define FXAA_QUALITY__P0 1.0
+#define FXAA_QUALITY__l0 1.0
 #define FXAA_QUALITY__P1 1.5
 #define FXAA_QUALITY__P2 2.0
 #define FXAA_QUALITY__P3 2.0
@@ -545,7 +545,7 @@ FXAA QUALITY - LOW DITHER PRESETS
 /*--------------------------------------------------------------------------*/
 #if (FXAA_QUALITY__PRESET == 27)
 #define FXAA_QUALITY__PS 10
-#define FXAA_QUALITY__P0 1.0
+#define FXAA_QUALITY__l0 1.0
 #define FXAA_QUALITY__P1 1.5
 #define FXAA_QUALITY__P2 2.0
 #define FXAA_QUALITY__P3 2.0
@@ -559,7 +559,7 @@ FXAA QUALITY - LOW DITHER PRESETS
 /*--------------------------------------------------------------------------*/
 #if (FXAA_QUALITY__PRESET == 28)
 #define FXAA_QUALITY__PS 11
-#define FXAA_QUALITY__P0 1.0
+#define FXAA_QUALITY__l0 1.0
 #define FXAA_QUALITY__P1 1.5
 #define FXAA_QUALITY__P2 2.0
 #define FXAA_QUALITY__P3 2.0
@@ -574,7 +574,7 @@ FXAA QUALITY - LOW DITHER PRESETS
 /*--------------------------------------------------------------------------*/
 #if (FXAA_QUALITY__PRESET == 29)
 #define FXAA_QUALITY__PS 12
-#define FXAA_QUALITY__P0 1.0
+#define FXAA_QUALITY__l0 1.0
 #define FXAA_QUALITY__P1 1.5
 #define FXAA_QUALITY__P2 2.0
 #define FXAA_QUALITY__P3 2.0
@@ -593,7 +593,7 @@ FXAA QUALITY - EXTREME QUALITY
 ============================================================================*/
 #if (FXAA_QUALITY__PRESET == 39)
 #define FXAA_QUALITY__PS 12
-#define FXAA_QUALITY__P0 1.0
+#define FXAA_QUALITY__l0 1.0
 #define FXAA_QUALITY__P1 1.0
 #define FXAA_QUALITY__P2 1.0
 #define FXAA_QUALITY__P3 1.0
@@ -1001,11 +1001,11 @@ FxaaFloat4 FxaaPixelShader(
     if (horzSpan) posB.y += lengthSign * 0.5;
     /*--------------------------------------------------------------------------*/
     FxaaFloat2 posN;
-    posN.x = posB.x - offNP.x * FXAA_QUALITY__P0;
-    posN.y = posB.y - offNP.y * FXAA_QUALITY__P0;
+    posN.x = posB.x - offNP.x * FXAA_QUALITY__l0;
+    posN.y = posB.y - offNP.y * FXAA_QUALITY__l0;
     FxaaFloat2 posP;
-    posP.x = posB.x + offNP.x * FXAA_QUALITY__P0;
-    posP.y = posB.y + offNP.y * FXAA_QUALITY__P0;
+    posP.x = posB.x + offNP.x * FXAA_QUALITY__l0;
+    posP.y = posB.y + offNP.y * FXAA_QUALITY__l0;
     FxaaFloat subpixD = ((-2.0)*subpixC) + 3.0;
     FxaaFloat lumaEndN = FxaaLuma(FxaaTexTop(tex, posN));
     FxaaFloat subpixE = subpixC * subpixC;

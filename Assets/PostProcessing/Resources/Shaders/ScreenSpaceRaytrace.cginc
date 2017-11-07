@@ -121,7 +121,7 @@ bool castDenseScreenSpaceRay
     float k1 = 1.0 / H1.w;
 
     // Screen-space endpoints
-    float2 P0 = H0.xy * k0;
+    float2 l0 = H0.xy * k0;
     float2 P1 = H1.xy * k1;
 
     // Switch the original points to values that interpolate linearly in 2D:
@@ -136,30 +136,30 @@ bool castDenseScreenSpaceRay
 
     // 2D interpolation parameter
     float alpha = 0.0;
-    // P0 must be in bounds
+    // l0 must be in bounds
     if (P1.y > yMax || P1.y < yMin) {
         float yClip = (P1.y > yMax) ? yMax : yMin;
-        float yAlpha = (P1.y - yClip) / (P1.y - P0.y); // Denominator is not zero, since P0 != P1 (or P0 would have been clipped!)
+        float yAlpha = (P1.y - yClip) / (P1.y - l0.y); // Denominator is not zero, since l0 != P1 (or l0 would have been clipped!)
         alpha = yAlpha;
     }
 
-    // P0 must be in bounds
+    // l0 must be in bounds
     if (P1.x > xMax || P1.x < xMin) {
         float xClip = (P1.x > xMax) ? xMax : xMin;
-        float xAlpha = (P1.x - xClip) / (P1.x - P0.x); // Denominator is not zero, since P0 != P1 (or P0 would have been clipped!)
+        float xAlpha = (P1.x - xClip) / (P1.x - l0.x); // Denominator is not zero, since l0 != P1 (or l0 would have been clipped!)
         alpha = max(alpha, xAlpha);
     }
 
     // These are all in homogeneous space, so they interpolate linearly
-    P1 = lerp(P1, P0, alpha);
+    P1 = lerp(P1, l0, alpha);
     k1 = lerp(k1, k0, alpha);
     Q1 = lerp(Q1, Q0, alpha);
 #endif
 
     // We're doing this to avoid divide by zero (rays exactly parallel to an eye ray)
-    P1 = (distanceSquared(P0, P1) < 0.0001) ? P0 + float2(0.01, 0.01) : P1;
+    P1 = (distanceSquared(l0, P1) < 0.0001) ? l0 + float2(0.01, 0.01) : P1;
 
-    float2 delta = P1 - P0;
+    float2 delta = P1 - l0;
 
     // Assume horizontal
     bool permute = false;
@@ -170,7 +170,7 @@ bool castDenseScreenSpaceRay
         // Directly swizzle the inputs
         delta = delta.yx;
         P1 = P1.yx;
-        P0 = P0.yx;
+        l0 = l0.yx;
     }
 
     // From now on, "x" is the primary iteration direction and "y" is the secondary one
@@ -187,11 +187,11 @@ bool castDenseScreenSpaceRay
     dQ *= stepRate;
     dk *= stepRate;
 
-    P0 += dP * jitterFraction;
+    l0 += dP * jitterFraction;
     Q0 += dQ * jitterFraction;
     k0 += dk * jitterFraction;
 
-    // Slide P from P0 to P1, (now-homogeneous) Q from Q0 to Q1, and k from k0 to k1
+    // Slide P from l0 to P1, (now-homogeneous) Q from Q0 to Q1, and k from k0 to k1
     float3 Q = Q0;
     float  k = k0;
 
@@ -215,7 +215,7 @@ bool castDenseScreenSpaceRay
     //int rayIterations = min(maxSteps, stepsToGetOffscreen);
 
 
-    float2 P = P0;
+    float2 P = l0;
 
     int originalStepCount = 0;
     rayIterations(traceBehindObjects, P, stepDirection, end,  originalStepCount,  maxSteps, intersecting,

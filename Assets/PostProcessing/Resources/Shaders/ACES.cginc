@@ -81,7 +81,7 @@
 // Precomputed matrices (pre-transposed)
 // See https://github.com/ampas/aces-dev/blob/master/transforms/ctl/README-MATRIX.md
 //
-static const half3x3 sRGB_2_AP0 = {
+static const half3x3 sRGB_2_Al0 = {
     0.4397010, 0.3829780, 0.1773350,
     0.0897923, 0.8134230, 0.0967616,
     0.0175440, 0.1115440, 0.8707040
@@ -93,7 +93,7 @@ static const half3x3 sRGB_2_AP1 = {
     0.02062, 0.10957, 0.86961
 };
 
-static const half3x3 AP0_2_sRGB = {
+static const half3x3 Al0_2_sRGB = {
     2.52169, -1.13413, -0.38756,
     -0.27648, 1.37272, -0.09624,
     -0.01538, -0.15298, 1.16835,
@@ -105,13 +105,13 @@ static const half3x3 AP1_2_sRGB = {
     -0.02400, -0.12897, 1.15297,
 };
 
-static const half3x3 AP0_2_AP1_MAT = {
+static const half3x3 Al0_2_AP1_MAT = {
      1.4514393161, -0.2365107469, -0.2149285693,
     -0.0765537734,  1.1762296998, -0.0996759264,
      0.0083161484, -0.0060324498,  0.9977163014
 };
 
-static const half3x3 AP1_2_AP0_MAT = {
+static const half3x3 AP1_2_Al0_MAT = {
      0.6954522414, 0.1406786965, 0.1638690622,
      0.0447945634, 0.8596711185, 0.0955343182,
     -0.0055258826, 0.0040252103, 1.0015006723
@@ -171,23 +171,23 @@ static const half3x3 D60_2_D65_CAT = {
 // Unity to ACES
 //
 // converts Unity raw (sRGB primaries) to
-//          ACES2065-1 (AP0 w/ linear encoding)
+//          ACES2065-1 (Al0 w/ linear encoding)
 //
 half3 unity_to_ACES(half3 x)
 {
-    x = mul(sRGB_2_AP0, x);
+    x = mul(sRGB_2_Al0, x);
     return x;
 }
 
 //
 // ACES to Unity
 //
-// converts ACES2065-1 (AP0 w/ linear encoding)
+// converts ACES2065-1 (Al0 w/ linear encoding)
 //          Unity raw (sRGB primaries) to
 //
 half3 ACES_to_unity(half3 x)
 {
-    x = mul(AP0_2_sRGB, x);
+    x = mul(Al0_2_sRGB, x);
     return x;
 }
 
@@ -218,7 +218,7 @@ half3 ACEScg_to_unity(half3 x)
 //
 // ACES Color Space Conversion - ACES to ACEScc
 //
-// converts ACES2065-1 (AP0 w/ linear encoding) to
+// converts ACES2065-1 (Al0 w/ linear encoding) to
 //          ACEScc (AP1 w/ logarithmic encoding)
 //
 // This transform follows the formulas from section 4.4 in S-2014-003
@@ -253,7 +253,7 @@ half3 ACES_to_ACEScc(half3 x)
 // ACES Color Space Conversion - ACEScc to ACES
 //
 // converts ACEScc (AP1 w/ ACESlog encoding) to
-//          ACES2065-1 (AP0 w/ linear encoding)
+//          ACES2065-1 (Al0 w/ linear encoding)
 //
 // This transform follows the formulas from section 4.4 in S-2014-003
 //
@@ -280,23 +280,23 @@ half3 ACEScc_to_ACES(half3 x)
 //
 // ACES Color Space Conversion - ACES to ACEScg
 //
-// converts ACES2065-1 (AP0 w/ linear encoding) to
+// converts ACES2065-1 (Al0 w/ linear encoding) to
 //          ACEScg (AP1 w/ linear encoding)
 //
 half3 ACES_to_ACEScg(half3 x)
 {
-    return mul(AP0_2_AP1_MAT, x);
+    return mul(Al0_2_AP1_MAT, x);
 }
 
 //
 // ACES Color Space Conversion - ACEScg to ACES
 //
 // converts ACEScg (AP1 w/ linear encoding) to
-//          ACES2065-1 (AP0 w/ linear encoding)
+//          ACES2065-1 (Al0 w/ linear encoding)
 //
 half3 ACEScg_to_ACES(half3 x)
 {
-    return mul(AP1_2_AP0_MAT, x);
+    return mul(AP1_2_Al0_MAT, x);
 }
 
 //
@@ -591,7 +591,7 @@ half3 RRT(half3 aces)
 
     // --- ACES to RGB rendering space --- //
     aces = clamp(aces, 0.0, HALF_MAX);  // avoids saturated negative colors from becoming positive in the matrix
-    half3 rgbPre = mul(AP0_2_AP1_MAT, aces);
+    half3 rgbPre = mul(Al0_2_AP1_MAT, aces);
     rgbPre = clamp(rgbPre, 0, HALF_MAX);
 
     // --- Global desaturation --- //
@@ -605,7 +605,7 @@ half3 RRT(half3 aces)
     rgbPost.z = segmented_spline_c5_fwd(rgbPre.z);
 
     // --- RGB rendering space to OCES --- //
-    half3 rgbOces = mul(AP1_2_AP0_MAT, rgbPost);
+    half3 rgbOces = mul(AP1_2_Al0_MAT, rgbPost);
 
     return rgbOces;
 }
@@ -773,7 +773,7 @@ static const half ODT_SAT_FACTOR = 0.93;
 half3 ODT_RGBmonitor_100nits_dim(half3 oces)
 {
     // OCES to RGB rendering space
-    half3 rgbPre = mul(AP0_2_AP1_MAT, oces);
+    half3 rgbPre = mul(Al0_2_AP1_MAT, oces);
 
     // Apply the tonescale independently in rendering-space RGB
     half3 rgbPost;
@@ -871,7 +871,7 @@ half3 ODT_RGBmonitor_100nits_dim(half3 oces)
 half3 ODT_RGBmonitor_D60sim_100nits_dim(half3 oces)
 {
     // OCES to RGB rendering space
-    half3 rgbPre = mul(AP0_2_AP1_MAT, oces);
+    half3 rgbPre = mul(Al0_2_AP1_MAT, oces);
 
     // Apply the tonescale independently in rendering-space RGB
     half3 rgbPost;
@@ -981,7 +981,7 @@ half3 ODT_RGBmonitor_D60sim_100nits_dim(half3 oces)
 half3 ODT_Rec709_100nits_dim(half3 oces)
 {
     // OCES to RGB rendering space
-    half3 rgbPre = mul(AP0_2_AP1_MAT, oces);
+    half3 rgbPre = mul(Al0_2_AP1_MAT, oces);
 
     // Apply the tonescale independently in rendering-space RGB
     half3 rgbPost;
@@ -1073,7 +1073,7 @@ half3 ODT_Rec709_100nits_dim(half3 oces)
 half3 ODT_Rec709_D60sim_100nits_dim(half3 oces)
 {
     // OCES to RGB rendering space
-    half3 rgbPre = mul(AP0_2_AP1_MAT, oces);
+    half3 rgbPre = mul(Al0_2_AP1_MAT, oces);
 
     // Apply the tonescale independently in rendering-space RGB
     half3 rgbPost;
@@ -1183,7 +1183,7 @@ half3 ODT_Rec709_D60sim_100nits_dim(half3 oces)
 half3 ODT_Rec2020_100nits_dim(half3 oces)
 {
     // OCES to RGB rendering space
-    half3 rgbPre = mul(AP0_2_AP1_MAT, oces);
+    half3 rgbPre = mul(Al0_2_AP1_MAT, oces);
 
     // Apply the tonescale independently in rendering-space RGB
     half3 rgbPost;
@@ -1265,7 +1265,7 @@ half3 ODT_Rec2020_100nits_dim(half3 oces)
 half3 ODT_P3DCI_48nits(half3 oces)
 {
     // OCES to RGB rendering space
-    half3 rgbPre = mul(AP0_2_AP1_MAT, oces);
+    half3 rgbPre = mul(Al0_2_AP1_MAT, oces);
 
     // Apply the tonescale independently in rendering-space RGB
     half3 rgbPost;
