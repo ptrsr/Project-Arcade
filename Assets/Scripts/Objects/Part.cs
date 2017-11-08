@@ -23,6 +23,8 @@ public class Part : GravityObject
 
     protected override void Start()
     {
+        ServiceLocator.Locate<ObjectSafe>().AddTemporaryObject(gameObject);
+
         gameObject.layer = 8;
         name = "Part";
 

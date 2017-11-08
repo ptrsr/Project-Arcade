@@ -11,7 +11,7 @@ public class Shell : Projectile
 
     private float _timeSinceSpawned = 0;
 
-    private void Start()
+    protected override void Start()
     {
         GetComponent<Rigidbody>().AddForce(transform.forward * _velocity, ForceMode.Impulse);
     }

@@ -4,6 +4,15 @@ using UnityEngine;
 
 public class FollowCam : MonoBehaviour
 {
+    private enum CameraState
+    {
+        Menu,
+        Game
+    }
+
+    [SerializeField]
+    private CameraState _cameraState = CameraState.Menu;
+
     [SerializeField]
     private float
         _distance = 0.5f,
@@ -19,6 +28,9 @@ public class FollowCam : MonoBehaviour
     [SerializeField]
     private Vector2 _angle = new Vector2();
 
+    [SerializeField]
+    private Transform _menuTransform;
+
     private Vector3 _currentFocusPos;
 
     private Globe _globe;
@@ -29,13 +41,22 @@ public class FollowCam : MonoBehaviour
         _target = ServiceLocator.Locate<SpaceShip>();
         _globe = ServiceLocator.Locate<Globe>();
 
-        _currentFocusPos = _target.transform.position;
-        SetCameraTransform(_target);
+        if (_cameraState == CameraState.Game)
+        {
+            _currentFocusPos = _target.transform.position;
+            SetCameraTransform(_target);
+        }
+        else
+        {
+            transform.position = _menuTransform.position;
+            transform.rotation = _menuTransform.rotation;
+        }
     }
 
     void FixedUpdate ()
     {
-        Follow(_target, GetFocusPosition(_target));
+        if (_cameraState == CameraState.Game)
+            Follow(_target, GetFocusPosition(_target));
     }
 
     private void OnValidate()
@@ -44,8 +65,14 @@ public class FollowCam : MonoBehaviour
 
         SpaceShip target = ServiceLocator.Locate<SpaceShip>();
 
-        if (target != null)
+        if (_cameraState == CameraState.Game && target != null)
             SetCameraTransform(target);
+        else if (_menuTransform != null)
+        {
+            transform.position = _menuTransform.position;
+            transform.rotation = _menuTransform.rotation;
+        }
+
     }
 
     private void Follow(GlobeObject HoverTarget, Vector3 focusPosition)

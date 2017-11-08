@@ -9,9 +9,18 @@ public class GlobeObject : MonoBehaviour
 
     private Globe _globe;
 
-    public GlobeObject()
+    private void Awake()
     {
         Globe.onGlobeChange += OnGlobeChanged;
+        ObjectSafe.onGameStart += OnGameStart;
+    }
+
+    private void OnGameStart(ObjectSafe objectSafe)
+    {
+        if (gameObject == null)
+            return;
+
+        objectSafe.Safe(gameObject);
     }
 
     private void OnGlobeChanged()

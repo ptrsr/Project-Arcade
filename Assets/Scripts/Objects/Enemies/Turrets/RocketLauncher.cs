@@ -7,26 +7,34 @@ public class RocketLauncher : TurretHead
 {
     [SerializeField]
     private Transform _rocketSpawn;
-
-    [SerializeField]
     private Rocket _currentRocket;
+
+    protected override void Start()
+    {
+        SpawnRocket(ProjectileSpawnPoints[0]);
+    }
 
     protected override void Update()
     {
         base.Update();
-        _currentRocket.SetTransparancy(ReloadStatus);
+
+        if (_currentRocket != null)
+            _currentRocket.SetTransparancy(ReloadStatus);
 
         if (_currentRocket == null)
             GetComponent<DestroyableObject>().Explode();
     }
 
-    protected override void Fire(Transform projectileSpawnpoint)
+    void SpawnRocket(Transform spawnPoint)
     {
-        _currentRocket.Fire(_target);
-
-        _currentRocket = Instantiate(_projectilePrefab, projectileSpawnpoint).GetComponent<Rocket>();
-
+        _currentRocket = Instantiate(_projectilePrefab, spawnPoint).GetComponent<Rocket>();
         _currentRocket.transform.localRotation = Quaternion.identity;
         _currentRocket.transform.localPosition = new Vector3();
+    }
+
+    protected override void Fire(Transform projectileSpawnpoint)
+    {
+        _currentRocket.Fire(Target);
+        SpawnRocket(projectileSpawnpoint);
     }
 }

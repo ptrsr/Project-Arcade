@@ -31,7 +31,7 @@ public class TurretHead : MonoBehaviour
         _range = 20;
 
     private GravityObject _gravityObject;
-    protected GlobeObject _target;
+    private GlobeObject _target;
 
     private Quaternion
         _idleBarrelRotation,
@@ -55,8 +55,8 @@ public class TurretHead : MonoBehaviour
         if (_gravityObject != null && (_gravityObject.Beamed || !_gravityObject.Kinematic))
             return;
 
-        if (CheckInRange(_target))
-            Aim(_target);
+        if (CheckInRange(Target))
+            Aim(Target);
         else
             Idle();
     }
@@ -112,11 +112,6 @@ public class TurretHead : MonoBehaviour
         return Vector3.Distance(transform.position, target.ScenePosition) < _range;
     }
 
-    private void OnDrawGizmosSelected()
-    {
-
-    }
-
     protected float ReloadStatus
     {
         get { return 1 - _reloadTime / _reloadSpeed; }
@@ -127,4 +122,14 @@ public class TurretHead : MonoBehaviour
         get { return _projectileSpawnPoints; }
     }
 
+    protected GlobeObject Target
+    {
+        get
+        {
+            if (_target == null)
+                _target = ServiceLocator.Locate<SpaceShip>();
+
+            return _target;
+        }
+    }
 }

@@ -465,7 +465,7 @@ public class Globe : MonoBehaviour
 
         Vector3 GlobeDown = -rayPos.normalized;
 
-        float raylength = Application.isPlaying ? globe.MaxHeight - globe.WaterLevel + 1 : 10000;
+        float raylength = globe.MaxHeight - globe.WaterLevel + 1;
 
         RaycastHit tempHit;
         if (Physics.Raycast(rayPos, GlobeDown, out tempHit, raylength, 1 << 10))
