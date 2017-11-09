@@ -4,15 +4,6 @@ using UnityEngine;
 
 public class FollowCam : MonoBehaviour
 {
-    private enum CameraState
-    {
-        Menu,
-        Game
-    }
-
-    [SerializeField]
-    private CameraState _cameraState = CameraState.Menu;
-
     [SerializeField]
     private float
         _distance = 0.5f,
@@ -33,15 +24,27 @@ public class FollowCam : MonoBehaviour
 
     private Vector3 _currentFocusPos;
 
-    private Globe _globe;
+    private Globe        _globe;
+    private Menu         _menu;
     private MovingObject _target;
 
-	void Start ()
+    private void Awake()
+    {
+        ObjectSafe.onSpawn += SetTarget;
+    }
+
+    private void SetTarget()
+    {
+        _target = ServiceLocator.Locate<SpaceShip>();
+    }
+
+    void Start ()
     {
         _target = ServiceLocator.Locate<SpaceShip>();
         _globe = ServiceLocator.Locate<Globe>();
+        _menu = ServiceLocator.Locate<Menu>();
 
-        if (_cameraState == CameraState.Game)
+        if (_menu.GameState == GameState.Game)
         {
             _currentFocusPos = _target.transform.position;
             SetCameraTransform(_target);
@@ -55,7 +58,7 @@ public class FollowCam : MonoBehaviour
 
     void FixedUpdate ()
     {
-        if (_cameraState == CameraState.Game)
+        if (_menu.GameState == GameState.Game)
             Follow(_target, GetFocusPosition(_target));
     }
 
@@ -65,7 +68,7 @@ public class FollowCam : MonoBehaviour
 
         SpaceShip target = ServiceLocator.Locate<SpaceShip>();
 
-        if (_cameraState == CameraState.Game && target != null)
+        if (_menu.GameState == GameState.Game && target != null)
             SetCameraTransform(target);
         else if (_menuTransform != null)
         {

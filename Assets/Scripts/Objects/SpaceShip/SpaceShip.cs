@@ -16,8 +16,9 @@ public class SpaceShip : MovingObject
 
     int _weaponSelector = 0;
 
-    private SpaceShip()
+    protected override void Awake()
     {
+        base.Awake();
         ServiceLocator.Provide(this);
     }
 

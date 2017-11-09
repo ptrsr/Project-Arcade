@@ -2,13 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public delegate void OnGameStart(ObjectSafe safe);
-
 public class ObjectSafe
 {
+    public delegate void OnGameStart(ObjectSafe safe);
+    public delegate void OnSafeAction();
+
     private static readonly ObjectSafe _instance = new ObjectSafe();
 
     public static event OnGameStart onGameStart;
+    public static event OnSafeAction onSpawn;
 
     private List<GameObject> _currentObjects;
     private List<GameObject> _safedObjects;
@@ -25,8 +27,6 @@ public class ObjectSafe
 
 	public void Start ()
     {
-
-        Debug.Log(onGameStart.GetInvocationList().Length);
         foreach (OnGameStart start in onGameStart.GetInvocationList())
         {
             try { start(this); }
@@ -63,6 +63,7 @@ public class ObjectSafe
             _currentObjects.Add(copy);
             copy.SetActive(true);
         }
+        onSpawn();
     }
 
     public void AddTemporaryObject(GameObject obj)

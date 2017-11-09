@@ -9,7 +9,7 @@ public class GlobeObject : MonoBehaviour
 
     private Globe _globe;
 
-    private void Awake()
+    protected virtual void Awake()
     {
         Globe.onGlobeChange += OnGlobeChanged;
         ObjectSafe.onGameStart += OnGameStart;
@@ -17,9 +17,6 @@ public class GlobeObject : MonoBehaviour
 
     private void OnGameStart(ObjectSafe objectSafe)
     {
-        if (gameObject == null)
-            return;
-
         objectSafe.Safe(gameObject);
     }
 

@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor.Callbacks;
 using System;
+using UnityEngine.SceneManagement;
 
-public delegate void OnGlobeChange();
 
 [RequireComponent(typeof(MeshRenderer))]
 [RequireComponent(typeof(MeshFilter))]
 public class Globe : MonoBehaviour
 {
+    public delegate void OnGlobeChange();
+
     [Serializable]
     struct GlobeSettings
     {
@@ -96,8 +98,7 @@ public class Globe : MonoBehaviour
     private MeshCollider _mc;
     private Material     _mat;
 
-
-
+    
     private Globe()
     {
         ServiceLocator.Provide(this);
@@ -110,6 +111,9 @@ public class Globe : MonoBehaviour
 
     private void Update()
     {
+        if (!Application.isPlaying)
+            return;
+
         _mat.SetFloat("_timer", Time.time / _waveSpeed);
         _mat.SetFloat("_test", _test);
     }
