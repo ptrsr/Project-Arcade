@@ -34,12 +34,6 @@ public class Menu : MonoBehaviour
 	
 	void Update ()
     {
-        if (Input.GetKeyDown(KeyCode.O))
-            ServiceLocator.Locate<ObjectSafe>().Delete();
-
-        if (Input.GetKeyDown(KeyCode.P))
-            ServiceLocator.Locate<ObjectSafe>().Spawn();
-
         if (_gameState == GameState.Menu)
         {
             if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
@@ -54,12 +48,28 @@ public class Menu : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 if (_menuState == MenuState.Play)
-                    _gameState = GameState.Game;
+                    Play();
 
                 if (_menuState == MenuState.Quit)
                     Quit();
             }
         }
+
+        if (_gameState == GameState.Game)
+            if (Input.GetKeyDown(KeyCode.Escape))
+                ReturnToMenu();
+    }
+
+    private void Play()
+    {
+        _gameState = GameState.Game;
+        ServiceLocator.Locate<ObjectSafe>().Spawn();
+    }
+
+    private void ReturnToMenu()
+    {
+        _gameState = GameState.Menu;
+        ServiceLocator.Locate<ObjectSafe>().Delete();
     }
 
     private void Quit()

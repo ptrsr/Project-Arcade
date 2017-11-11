@@ -9,7 +9,8 @@ public class FollowCam : MonoBehaviour
         _distance = 0.5f,
         _forwardMulti = 0.5f,
         _hoverHeight,
-        _focusHeight;
+        _focusHeight,
+        _returnSpeed;
 
     [SerializeField] [Range(0, 20)]
     private float
@@ -60,8 +61,16 @@ public class FollowCam : MonoBehaviour
     {
         if (_menu.GameState == GameState.Game)
             Follow(_target, GetFocusPosition(_target));
+
+        if (_menu.GameState == GameState.Menu)
+            FlyToMenu();
     }
 
+    private void FlyToMenu()
+    {
+        transform.position = Vector3.Lerp(transform.position, _menu.transform.position, _returnSpeed);
+        transform.rotation = Quaternion.Slerp(transform.rotation, _menu.transform.rotation, _returnSpeed);
+    }
     private void OnValidate()
     {
         ServiceLocator.Provide(this);
@@ -80,8 +89,13 @@ public class FollowCam : MonoBehaviour
 
     private void Follow(GlobeObject HoverTarget, Vector3 focusPosition)
     {
-        transform.position = Vector3.Lerp(transform.position, HoverPosition(HoverTarget), Mathf.Min(_moveSpeed * Time.deltaTime, 1));
-        transform.rotation = Quaternion.LookRotation((focusPosition - transform.position).normalized, HoverTarget.transform.up);
+        Vector3 desiredPosition = HoverPosition(HoverTarget);
+        transform.position = Vector3.Lerp(transform.position, desiredPosition, Mathf.Min(_moveSpeed * Time.deltaTime, 1));
+
+        Quaternion desiredRotation = Quaternion.LookRotation((focusPosition - transform.position).normalized, HoverTarget.transform.up);
+
+        float delta = Vector3.Distance(desiredPosition, _menu.transform.position);
+        transform.rotation = Quaternion.Slerp(transform.rotation, desiredRotation, (1 - (Vector3.Distance(transform.position, desiredPosition) / delta)) * _returnSpeed);
     }
 
     private Vector3 HoverPosition(GlobeObject focusTarget)
