@@ -43,8 +43,6 @@ public class ObjectSafe
 
     public void Delete()
     {
-        Debug.Log("Deleting objects: " + _currentObjects.Count);
-
         for (int i = _currentObjects.Count - 1; i >= 0; i--)
         {
             GameObject obj = _currentObjects[i];

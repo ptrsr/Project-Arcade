@@ -29,6 +29,11 @@ public class PostFX : MonoBehaviour
 
     private GlobeObject _player;
 
+    private void Awake()
+    {
+        ServiceLocator.Provide(this);
+    }
+
     private void Start()
     {
         _cam = Camera.main;
@@ -46,7 +51,6 @@ public class PostFX : MonoBehaviour
     private void OnValidate()
     {
         SetShaderUniforms();
-
     }
 
     private void SetShaderUniforms()
@@ -149,5 +153,13 @@ public class PostFX : MonoBehaviour
 
         GL.End();
         GL.PopMatrix();
+    }
+
+    public float Grayout
+    {
+        set { _mat.SetFloat("_grayout", Mathf.Clamp01(value));
+            print(value);
+
+        }
     }
 }

@@ -1,9 +1,5 @@
 Shader "custom/post_fx"
 {
-	Properties
-	{
-		_Scene ("Scene", 2D) = "white" {}
-	}
 	SubShader
 	{
 		Cull Off ZWrite Off ZTest Always
@@ -63,6 +59,8 @@ Shader "custom/post_fx"
 			uniform float _test1;
 			uniform float _test2;
 
+			uniform float _grayout;
+
 			uniform float4 _gradient[10];
 
 
@@ -93,7 +91,7 @@ Shader "custom/post_fx"
 				// gray out part of planet which is not part of level
 				float3 worldPos = WorldPosition (linearDepth, i.ray);
 
-				float fade = 1 - clamp(_levelWidth - abs(worldPos.z) + (abs(worldPos.z) - _levelWidth) * _borderFade, 0, 1);
+				float fade = 1 - max(clamp(_levelWidth - abs(worldPos.z) + (abs(worldPos.z) - _levelWidth) * _borderFade, 0, 1), _grayout);
 				float3 worldColor = lerp(scene, length(scene.xyz) / 3.0 + 0.1f, fade);
 
 

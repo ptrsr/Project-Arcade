@@ -23,11 +23,16 @@ public class FollowCam : MonoBehaviour
     [SerializeField]
     private Transform _menuTransform;
 
+    private float 
+        _delta,
+        _linear;
+
     private Vector3 _currentFocusPos;
 
     private Globe        _globe;
     private Menu         _menu;
     private MovingObject _target;
+    private PostFX       _postFX;
 
     private void Awake()
     {
@@ -44,6 +49,7 @@ public class FollowCam : MonoBehaviour
         _target = ServiceLocator.Locate<SpaceShip>();
         _globe = ServiceLocator.Locate<Globe>();
         _menu = ServiceLocator.Locate<Menu>();
+        _postFX = ServiceLocator.Locate<PostFX>();
 
         if (_menu.GameState == GameState.Game)
         {
@@ -55,10 +61,16 @@ public class FollowCam : MonoBehaviour
             transform.position = _menuTransform.position;
             transform.rotation = _menuTransform.rotation;
         }
+
+        Vector3 desiredPosition = HoverPosition(_target);
+        float delta = Vector3.Distance(desiredPosition, _menu.transform.position);
     }
 
     void FixedUpdate ()
     {
+        _linear = 1 - (Vector3.Distance(transform.position, HoverPosition(_target)) / _delta);
+        _postFX.Grayout = _linear;
+
         if (_menu.GameState == GameState.Game)
             Follow(_target, GetFocusPosition(_target));
 
@@ -71,21 +83,6 @@ public class FollowCam : MonoBehaviour
         transform.position = Vector3.Lerp(transform.position, _menu.transform.position, _returnSpeed);
         transform.rotation = Quaternion.Slerp(transform.rotation, _menu.transform.rotation, _returnSpeed);
     }
-    private void OnValidate()
-    {
-        ServiceLocator.Provide(this);
-
-        SpaceShip target = ServiceLocator.Locate<SpaceShip>();
-
-        if (_menu.GameState == GameState.Game && target != null)
-            SetCameraTransform(target);
-        else if (_menuTransform != null)
-        {
-            transform.position = _menuTransform.position;
-            transform.rotation = _menuTransform.rotation;
-        }
-
-    }
 
     private void Follow(GlobeObject HoverTarget, Vector3 focusPosition)
     {
@@ -93,9 +90,7 @@ public class FollowCam : MonoBehaviour
         transform.position = Vector3.Lerp(transform.position, desiredPosition, Mathf.Min(_moveSpeed * Time.deltaTime, 1));
 
         Quaternion desiredRotation = Quaternion.LookRotation((focusPosition - transform.position).normalized, HoverTarget.transform.up);
-
-        float delta = Vector3.Distance(desiredPosition, _menu.transform.position);
-        transform.rotation = Quaternion.Slerp(transform.rotation, desiredRotation, (1 - (Vector3.Distance(transform.position, desiredPosition) / delta)) * _returnSpeed);
+        transform.rotation = Quaternion.Slerp(transform.rotation, desiredRotation, _linear * _returnSpeed);
     }
 
     private Vector3 HoverPosition(GlobeObject focusTarget)

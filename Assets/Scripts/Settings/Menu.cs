@@ -22,6 +22,9 @@ public class Menu : MonoBehaviour
     [SerializeField]
     private MenuState _menuState = MenuState.Play;
 
+    [SerializeField]
+    private MenuItem[] _items;
+
     private void Awake()
     {
         ServiceLocator.Provide(this);
@@ -30,6 +33,11 @@ public class Menu : MonoBehaviour
     void Start ()
     {
         ServiceLocator.Locate<ObjectSafe>().Start();
+
+        foreach (MenuItem item in _items)
+            item.Selected = false;
+
+        _items[System.Convert.ToInt32(_menuState)].Selected = true;
 	}
 	
 	void Update ()
@@ -83,6 +91,8 @@ public class Menu : MonoBehaviour
 
     private void ChangeState(int change)
     {
+        _items[System.Convert.ToInt32(_menuState)].Selected = false;
+
         _menuState += change;
         int num = System.Convert.ToInt32(_menuState);
         int max = System.Enum.GetNames(typeof(MenuState)).Length - 1;
@@ -92,6 +102,8 @@ public class Menu : MonoBehaviour
 
         if (num > max)
             _menuState -= max + 1;
+
+        _items[System.Convert.ToInt32(_menuState)].Selected = true;
     }
 
     public GameState GameState
