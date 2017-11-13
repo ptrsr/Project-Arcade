@@ -14,6 +14,9 @@ public class GlobePainter : Editor
 
         if (GUILayout.Button("Paint terrain"))
             _picking ^= true;
+
+        if (GUILayout.Button("Safe terrain"))
+            ((Globe)target).SavePaintMap();
     }
 
     private void OnSceneGUI()

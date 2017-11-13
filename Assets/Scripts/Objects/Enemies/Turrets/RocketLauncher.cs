@@ -12,6 +12,11 @@ public class RocketLauncher : TurretHead
     protected override void Start()
     {
         SpawnRocket(ProjectileSpawnPoints[0]);
+
+        Rocket[] rockets = GetComponentsInChildren<Rocket>();
+
+        if (rockets.Length > 1)
+            Destroy(rockets[0].gameObject);
     }
 
     protected override void Update()
@@ -35,6 +40,7 @@ public class RocketLauncher : TurretHead
     protected override void Fire(Transform projectileSpawnpoint)
     {
         _currentRocket.Fire(Target);
+        _currentRocket = null;
         SpawnRocket(projectileSpawnpoint);
     }
 }

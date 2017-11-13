@@ -31,8 +31,12 @@ public class Part : GravityObject
         _mat = GetComponent<MeshRenderer>().material;
         _mat.EnableKeyword("_EMISSION");
 
-        if (GetComponent<Rigidbody>() == null)
-            gameObject.AddComponent<Rigidbody>();
+        Rigidbody rb;
+
+        rb = GetComponent<Rigidbody>();
+
+        if (rb == null)
+            rb = gameObject.AddComponent<Rigidbody>();
 
         if (GetComponent<Collider>() == null)
             gameObject.AddComponent<BoxCollider>();
@@ -41,6 +45,7 @@ public class Part : GravityObject
 
         Gravity = true;
         Kinematic = false;
+        rb.drag = 0.5f;
 
         _despawnTimer = _despawnTime;
 

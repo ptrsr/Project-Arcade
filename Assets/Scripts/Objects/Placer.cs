@@ -10,6 +10,7 @@ public class Placer : Editor
     public override void OnInspectorGUI()
     {
         DrawDefaultInspector();
+        EditorUtility.SetDirty(target);
 
         if (GUILayout.Button("Place Object"))
             _placing = true;
@@ -17,9 +18,8 @@ public class Placer : Editor
 
     void OnSceneGUI()
     {
-        if (!_placing)
+        if (!_placing || Application.isPlaying)
             return;
-
         Vector3 mousePosition = Event.current.mousePosition;
 
         Camera cam = SceneView.lastActiveSceneView.camera;
@@ -31,20 +31,25 @@ public class Placer : Editor
         if (!Physics.Raycast(ray, out hit, 1 << 10))
             return;
 
-        GlobeObject building = (GlobeObject)target;
+        GlobeObject globeObject = (GlobeObject)target;
 
         if (!Event.current.alt)
         {
-            building.SetPosition(hit.point);
-            building.transform.up = hit.normal;
+
+            Vector3 globePos = Globe.SceneToGlobePosition(hit.point);
+            Vector3 normal;
+            Vector3 worldPos = Globe.GlobeToScenePosition(globePos, out normal);
+
+            globeObject.SetPosition(worldPos);
+            globeObject.transform.up = normal;
         }
         else
         {
-            Vector3 delta = building.transform.InverseTransformDirection(hit.point - building.transform.position);
+            Vector3 delta = globeObject.transform.InverseTransformDirection(hit.point - globeObject.transform.position);
             delta.y = 0;
-            Vector3 lookPos = building.transform.TransformDirection(delta);
+            Vector3 lookPos = globeObject.transform.TransformDirection(delta);
 
-            building.transform.rotation = Quaternion.LookRotation(lookPos.normalized, building.transform.up);
+            globeObject.transform.rotation = Quaternion.LookRotation(lookPos.normalized, globeObject.transform.up);
         }
 
         if (Event.current.type == EventType.mouseDown)

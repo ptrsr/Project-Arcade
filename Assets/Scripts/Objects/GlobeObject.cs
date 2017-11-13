@@ -5,7 +5,7 @@ using UnityEngine;
 public class GlobeObject : MonoBehaviour
 {
     [SerializeField]
-    protected Vector3 _globePosition;
+    protected Vector3 _globePosition = new Vector3();
 
     private Globe _globe;
 

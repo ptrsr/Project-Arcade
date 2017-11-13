@@ -38,7 +38,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1451579996695788}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 85.795, z: 0}
+  m_LocalPosition: {x: 0, y: 210.91, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -107,7 +107,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _globePosition: {x: 0, y: 0, z: 0}
-  _active: 1
 --- !u!114 &114311092244148760
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -119,10 +118,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2be749cf409eee4a94f65e2c914d131, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _sinkable: 1
   _health: 3
   _explosionSize: 0
   _partForceMulti: 3
   _destroyedPrefab: {fileID: 1349272279180542, guid: 40297d169e221d84c80614d261b19b8c,
     type: 2}
-  _explosion: {fileID: 1894898483679224, guid: 1e87f382729966b4fa145f02a02ed868, type: 2}
   _removedBehaviours: []

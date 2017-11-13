@@ -9,7 +9,8 @@ public class PostFX : MonoBehaviour
 
     [SerializeField]
     [Range(0, 1)]
-    private float _borderFade = 1;
+    private float _borderFade = 1,
+        _test;
 
     [SerializeField]
     private float
@@ -158,8 +159,6 @@ public class PostFX : MonoBehaviour
     public float Grayout
     {
         set { _mat.SetFloat("_grayout", Mathf.Clamp01(value));
-            print(value);
-
         }
     }
 }

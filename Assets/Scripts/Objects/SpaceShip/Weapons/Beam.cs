@@ -30,7 +30,6 @@ public class Beam : Weapon
 
     private void Start()
     {
-
         _mr = GetComponent<MeshRenderer>();
         _mr.enabled = false;
         _mat = InitShader(_shader);
@@ -78,6 +77,7 @@ public class Beam : Weapon
             if (!gObject.Beamable)
                 continue;
 
+            gObject.ApplyForce(new Vector3());
             gObject.transform.position += (transform.parent.position - gObject.transform.position).normalized * _beamSpeed + deltaPosition;
         }
         _lastPosition = transform.position;
@@ -133,7 +133,10 @@ public class Beam : Weapon
             return;
 
         if (_beamableObjects.Contains(gObject))
+        {
+            gObject.Beamed = false;
             _beamableObjects.Remove(gObject);
+        }
     }
 
     private void OnBeam(GravityObject gObject)

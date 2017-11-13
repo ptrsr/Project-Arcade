@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor.Callbacks;
 using System;
-using UnityEngine.SceneManagement;
-
+using System.IO;
 
 [RequireComponent(typeof(MeshRenderer))]
 [RequireComponent(typeof(MeshFilter))]
@@ -146,7 +145,9 @@ public class Globe : MonoBehaviour
         MF.mesh = mesh;
         MC.sharedMesh = mesh;
 
-        _paintMap = CreateWorldTexture(mesh.vertexCount);
+        Texture2D loadedPaintMap = LoadPaintMap();
+
+        _paintMap = loadedPaintMap != null ? loadedPaintMap : CreateWorldTexture(mesh.vertexCount);
     }
 
     private void SetUniforms()
@@ -375,7 +376,30 @@ public class Globe : MonoBehaviour
     }
 
     #endregion
+    
+    public void SavePaintMap()
+    {
+        byte[] png = _paintMap.EncodeToPNG();
+        print(Application.dataPath);
+        File.WriteAllBytes(Application.dataPath + "/Textures/Globe/Paint Map.png", png);
+    }
 
+    public Texture2D LoadPaintMap()
+    {
+        Texture2D paintMap = null;
+
+        try
+        {
+            byte[] data = File.ReadAllBytes(Application.dataPath + "/Textures/Globe/Paint Map.png");
+
+            if (data != null)
+                print("at least this works!");
+
+            paintMap.LoadImage(data);
+        } catch { Debug.LogError("Paint map not found!"); }
+
+        return paintMap;
+    }
 
     #region GETTERS / SETTERS
     private MeshRenderer MR
@@ -488,6 +512,9 @@ public class Globe : MonoBehaviour
     [DidReloadScripts]
     private static void OnSceneReload()
     {
-        ServiceLocator.Locate<Globe>().SetUniforms();
+        Globe globe = ServiceLocator.Locate<Globe>();
+        
+        if (globe != null)
+            globe.SetUniforms();
     }
 }

@@ -5,9 +5,6 @@ using UnityEngine;
 public class DestroyableObject : MonoBehaviour
 {
     [SerializeField]
-    private bool _sinkable = true;
-
-    [SerializeField]
     private float
         _health,
         _explosionSize,
@@ -28,9 +25,6 @@ public class DestroyableObject : MonoBehaviour
 
     void Update ()
     {
-        if (_rigidBody != null && !_rigidBody.isKinematic && Globe.SceneToGlobePosition(transform.position).y < 0)
-            Sink();
-
         if (!_exploded && _health < 0)
             Explode();
 
@@ -52,12 +46,6 @@ public class DestroyableObject : MonoBehaviour
     public void Damage(float damage)
     {
         _health -= damage;
-    }
-
-    private void Sink()
-    {
-        Instantiate(ServiceLocator.Locate<Effects>().Splash, transform.position, transform.rotation);
-        Destroy(gameObject);
     }
 
     public void Explode()

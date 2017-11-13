@@ -20,9 +20,6 @@ public class FollowCam : MonoBehaviour
     [SerializeField]
     private Vector2 _angle = new Vector2();
 
-    [SerializeField]
-    private Transform _menuTransform;
-
     private float 
         _delta,
         _linear;
@@ -58,17 +55,17 @@ public class FollowCam : MonoBehaviour
         }
         else
         {
-            transform.position = _menuTransform.position;
-            transform.rotation = _menuTransform.rotation;
+            transform.position = _menu.transform.position;
+            transform.rotation = _menu.transform.rotation;
         }
 
         Vector3 desiredPosition = HoverPosition(_target);
-        float delta = Vector3.Distance(desiredPosition, _menu.transform.position);
+        _delta = Vector3.Distance(desiredPosition, _menu.transform.position);
     }
 
     void FixedUpdate ()
     {
-        _linear = 1 - (Vector3.Distance(transform.position, HoverPosition(_target)) / _delta);
+        _linear = 1 - Vector3.Distance(transform.position, _menu.transform.position) / _delta;
         _postFX.Grayout = _linear;
 
         if (_menu.GameState == GameState.Game)
@@ -90,7 +87,7 @@ public class FollowCam : MonoBehaviour
         transform.position = Vector3.Lerp(transform.position, desiredPosition, Mathf.Min(_moveSpeed * Time.deltaTime, 1));
 
         Quaternion desiredRotation = Quaternion.LookRotation((focusPosition - transform.position).normalized, HoverTarget.transform.up);
-        transform.rotation = Quaternion.Slerp(transform.rotation, desiredRotation, _linear * _returnSpeed);
+        transform.rotation = Quaternion.Slerp(transform.rotation, desiredRotation,  (1 -_linear) * _returnSpeed);
     }
 
     private Vector3 HoverPosition(GlobeObject focusTarget)

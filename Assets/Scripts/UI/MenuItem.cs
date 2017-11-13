@@ -24,6 +24,8 @@ public class MenuItem : MonoBehaviour {
     {
         _mat = new Material(_shader);
         GetComponent<UnityEngine.UI.Text>().material = _mat;
+
+        Selected = true;
     }
 
     private void Start()

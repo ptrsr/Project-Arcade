@@ -29,6 +29,9 @@ public class GravityObject : MonoBehaviour
     {
         if (_gravity)
             ApplyGravity();
+
+        if (!Kinematic && Globe.SceneToGlobePosition(transform.position).y < -1)
+            Sink();
     }
 
     public void ApplyForce(Vector3 force, Vector3 torq = new Vector3())
@@ -53,6 +56,12 @@ public class GravityObject : MonoBehaviour
         GlobeObject.GlobePosition = globePosition;
         Kinematic = true;
         Gravity = false;
+    }
+
+    private void Sink()
+    {
+        Instantiate(ServiceLocator.Locate<Effects>().Splash, transform.position, transform.rotation);
+        Destroy(gameObject);
     }
 
     public Globe Globe
@@ -121,7 +130,13 @@ public class GravityObject : MonoBehaviour
 
     public bool Kinematic
     {
-        get { return Body.isKinematic; }
+        get
+        {
+            if (Body == null)
+                return true;
+
+            return Body.isKinematic;
+        }
         protected set { Body.isKinematic = value; }
     }
 }

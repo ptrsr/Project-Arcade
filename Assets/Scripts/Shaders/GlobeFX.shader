@@ -21,9 +21,6 @@ Shader "custom/globeFX"
 			#pragma fragment frag
 			#pragma multi_compile_fwdbase
 
- 
-			uniform half4        _Color;
- 
 			struct appdata
 			{
 				half4	vertex	:	POSITION;

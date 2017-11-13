@@ -46,6 +46,8 @@ public class TurretHead : MonoBehaviour
 
         _idleHeadRotation = _head.localRotation;
         _idleBarrelRotation = _barrel.localRotation;
+
+        _reloadTime = _reloadSpeed;
     }
 
     protected virtual void Update()
