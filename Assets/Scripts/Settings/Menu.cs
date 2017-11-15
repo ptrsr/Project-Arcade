@@ -25,6 +25,9 @@ public class Menu : MonoBehaviour
     [SerializeField]
     private MenuItem[] _items;
 
+    private ObjectSafe _objectSafe;
+    private Score      _score;
+
     private void Awake()
     {
         ServiceLocator.Provide(this);
@@ -32,7 +35,10 @@ public class Menu : MonoBehaviour
 
     void Start ()
     {
-        ServiceLocator.Locate<ObjectSafe>().Start();
+        _objectSafe = ServiceLocator.Locate<ObjectSafe>();
+        _score      = ServiceLocator.Locate<Score>();
+
+        _objectSafe.Start();
 
         foreach (MenuItem item in _items)
             item.Selected = false;
@@ -71,13 +77,14 @@ public class Menu : MonoBehaviour
     private void Play()
     {
         _gameState = GameState.Game;
-        ServiceLocator.Locate<ObjectSafe>().Spawn();
+        _objectSafe.Spawn();
     }
 
     private void ReturnToMenu()
     {
         _gameState = GameState.Menu;
-        ServiceLocator.Locate<ObjectSafe>().Delete();
+        _score.ResetScore();
+        _objectSafe.Delete();
     }
 
     private void Quit()

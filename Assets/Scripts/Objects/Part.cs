@@ -10,13 +10,18 @@ public class Part : GravityObject
         _maxAltitudeDespawn = 2,
         _despawnTime = 2,
         _sinkSpeed = 1,
-        _despawnDepth = -1;
+        _despawnDepth = -1,
+        _maxEmitSize = 6,
+        _minEmitSize = 1;
 
     [SerializeField]
     private int blinkSpeed = 5;
 
     private float _despawnTimer;
-    bool _despawn = false;
+    private bool
+        _despawn = false,
+        _emits,
+        _small;
 
     Vector3 _explodeForce = new Vector3();
     Material _mat;
@@ -47,6 +52,18 @@ public class Part : GravityObject
         Kinematic = false;
         rb.drag = 0.5f;
 
+        float size = Col.bounds.size.magnitude;
+
+        _emits = size < _maxEmitSize;
+        _small = size < _minEmitSize;
+
+        if (_small)
+        {
+            Sinkable = false;
+            Beamable = false;
+            _emits   = false;
+        }
+
         _despawnTimer = _despawnTime;
 
         transform.DetachChildren();
@@ -63,13 +80,15 @@ public class Part : GravityObject
     {
         base.Update();
 
-        Emit();
+        if (_emits)
+            Emit();
 
         if (_despawn)
             return;
 
-        if (Body.velocity.magnitude < _maxVelocityDespawn &&
-            Globe.SceneToGlobePosition(transform.position).y < _maxAltitudeDespawn)
+        float height = Globe.SceneToGlobePosition(Col.bounds.ClosestPoint(new Vector3())).y;
+
+        if (Body.velocity.magnitude < _maxVelocityDespawn && height < _maxAltitudeDespawn)
         {
             _despawnTimer = Mathf.Clamp(_despawnTimer - Time.deltaTime, 0, _despawnTime);
 

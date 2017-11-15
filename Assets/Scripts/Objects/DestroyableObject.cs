@@ -17,11 +17,23 @@ public class DestroyableObject : MonoBehaviour
     [SerializeField]
     private MonoBehaviour[] _removedBehaviours;
 
-    private bool _exploded = false;
-    private bool _destroyableByImpact = false;
+    private bool
+        _exploded = false,
+        _destroyableByImpact = false,
+        _registered = false;
 
     private Rigidbody _rigidBody;
 
+    private void Awake()
+    {
+        ObjectSafe.onGameStart += RegisterAsScore;
+    }
+
+    private void RegisterAsScore(ObjectSafe safe)
+    {
+        ServiceLocator.Locate<Score>().RegisterScorePoint();
+        _registered = true;
+    }
 
     void Update ()
     {
@@ -84,6 +96,9 @@ public class DestroyableObject : MonoBehaviour
             Destroy(gameObject);
 
         _exploded = true;
+
+        if (_registered)
+            ServiceLocator.Locate<Score>().AddPoint();
     }
 
     private void DamageSurroundings()
@@ -130,5 +145,11 @@ public class DestroyableObject : MonoBehaviour
             }
 
         return objects;
+    }
+
+    public bool Registered
+    {
+        get { return _registered;  }
+        set { _registered = value; }
     }
 }

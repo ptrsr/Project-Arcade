@@ -60,6 +60,11 @@ public class ObjectSafe
             GameObject copy = Object.Instantiate(original);
             _currentObjects.Add(copy);
             copy.SetActive(true);
+
+            var scoreComponent = original.GetComponent<DestroyableObject>();
+
+            if (scoreComponent != null && scoreComponent.Registered)
+                copy.GetComponent<DestroyableObject>().Registered = true;
         }
         onSpawn();
     }

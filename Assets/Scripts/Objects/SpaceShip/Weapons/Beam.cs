@@ -19,6 +19,8 @@ public class Beam : Weapon
         _effectSpeed = 1,
         _effectMulti = 1;
 
+    private bool _firing;
+
     private Material _mat;
     private MeshRenderer _mr;
 
@@ -40,6 +42,7 @@ public class Beam : Weapon
         _beamableObjects = new List<GravityObject>();
 
         transform.localEulerAngles = new Vector3(90, 0, 0);
+        _firing = false;
     }
 
     private Material InitShader(Shader shader)
@@ -85,6 +88,7 @@ public class Beam : Weapon
 
     protected override void OnFireEnabled()
     {
+        _firing = true;
         _mr.enabled = true;
         _lastPosition = transform.position;
 
@@ -100,6 +104,7 @@ public class Beam : Weapon
 
     protected override void OnFireDisabled()
     {
+        _firing = false;
         _mr.enabled = false;
 
         foreach (GravityObject gObject in _beamableObjects)
@@ -134,7 +139,8 @@ public class Beam : Weapon
 
         if (_beamableObjects.Contains(gObject))
         {
-            gObject.Beamed = false;
+            if (_firing)
+                gObject.Beamed = false;
             _beamableObjects.Remove(gObject);
         }
     }

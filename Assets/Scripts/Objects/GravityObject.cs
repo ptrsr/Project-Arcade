@@ -8,7 +8,8 @@ public class GravityObject : MonoBehaviour
     private bool
         _gravity = false,
         _startKinematic = true,
-        _beamable = true;
+        _beamable = true,
+        _sinkable = true;
 
     private bool _beamed = false;
 
@@ -16,13 +17,14 @@ public class GravityObject : MonoBehaviour
 
     private Globe _globe;
     private Rigidbody _rigidBody;
-
+    private Collider _col;
 
     protected virtual void Start ()
     {
         Body.useGravity = false;
         Body.isKinematic = _startKinematic;
         _globeObject = GetComponent<GlobeObject>();
+        _col = GetComponent<Collider>();
     }
 	
 	protected virtual void Update ()
@@ -30,7 +32,7 @@ public class GravityObject : MonoBehaviour
         if (_gravity)
             ApplyGravity();
 
-        if (!Kinematic && Globe.SceneToGlobePosition(transform.position).y < -1)
+        if (_sinkable && IsUnderWater())
             Sink();
     }
 
@@ -56,6 +58,17 @@ public class GravityObject : MonoBehaviour
         GlobeObject.GlobePosition = globePosition;
         Kinematic = true;
         Gravity = false;
+    }
+
+    private bool IsUnderWater()
+    {
+        if (Kinematic || Col == null)
+            return false;
+
+        Vector3 highestPoint = Col.ClosestPoint(Col.bounds.center + transform.position.normalized * Col.bounds.extents.magnitude);
+        Vector3 globePos = Globe.SceneToGlobePosition(highestPoint);
+
+        return globePos.y < -20;
     }
 
     private void Sink()
@@ -116,6 +129,17 @@ public class GravityObject : MonoBehaviour
         protected set { _gravity = value; }
     }
 
+    protected Collider Col
+    {
+        get
+        {
+            if (_col == null)
+                _col = GetComponent<Collider>();
+
+            return _col;
+        }
+    }
+
     protected Rigidbody Body
     {
         get
@@ -138,5 +162,11 @@ public class GravityObject : MonoBehaviour
             return Body.isKinematic;
         }
         protected set { Body.isKinematic = value; }
+    }
+
+    protected bool Sinkable
+    {
+        get { return _sinkable;  }
+        set { _sinkable = value; }
     }
 }

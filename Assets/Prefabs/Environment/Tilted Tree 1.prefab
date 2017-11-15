@@ -125,6 +125,7 @@ MonoBehaviour:
   _gravity: 0
   _startKinematic: 1
   _beamable: 1
+  _sinkable: 1
 --- !u!114 &114919568399920568
 MonoBehaviour:
   m_ObjectHideFlags: 1

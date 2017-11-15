@@ -33,7 +33,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1511685150242200
 GameObject:
   m_ObjectHideFlags: 0
@@ -134,8 +134,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1264419292645798}
-  m_LocalRotation: {x: -0.060164906, y: 0.9912031, z: 0.1045421, w: -0.054476045}
-  m_LocalPosition: {x: -22.817936, y: 205.35556, z: 45.220802}
+  m_LocalRotation: {x: 0.011078063, y: 0.13479093, z: -0.060843065, w: 0.98894227}
+  m_LocalPosition: {x: 24.34528, y: 212.80383, z: 0.9719155}
   m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
   m_Children:
   - {fileID: 4819662574388998}
@@ -407,6 +407,7 @@ MonoBehaviour:
   _gravity: 1
   _startKinematic: 1
   _beamable: 1
+  _sinkable: 1
 --- !u!114 &114542130702644072
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -418,7 +419,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88010b0a93f26d7488c9b53df2625763, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _globePosition: {x: -0.11066035, y: 0.6, z: 0.21546307}
+  _globePosition: {x: 0.11390721, y: 0.6, z: 0.004537598}
   _rotateType: 0
   _acceleration: 0.9
   _rotateSpeed: 90
