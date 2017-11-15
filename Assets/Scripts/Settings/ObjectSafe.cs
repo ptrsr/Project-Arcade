@@ -4,13 +4,12 @@ using UnityEngine;
 
 public class ObjectSafe
 {
-    public delegate void OnGameStart(ObjectSafe safe);
-    public delegate void OnSafeAction();
-
     private static readonly ObjectSafe _instance = new ObjectSafe();
 
+    public delegate void OnGameStart(ObjectSafe safe);
+
     public static event OnGameStart onGameStart;
-    public static event OnSafeAction onSpawn;
+    public static event OnAction onSpawn;
 
     private List<GameObject> _currentObjects;
     private List<GameObject> _safedObjects;
@@ -23,6 +22,9 @@ public class ObjectSafe
         _safedObjects = new List<GameObject>();
 
         onGameStart = null;
+
+        Menu.OnPlay += Spawn;
+        Menu.OnStop += Delete;
     }
 
 	public void Start ()
@@ -32,7 +34,6 @@ public class ObjectSafe
             try { start(this); }
             catch { onGameStart -= start; }
         }
-
     }
 
     public void Safe(GameObject original)

@@ -27,7 +27,7 @@ public class Laser : Weapon
 
     private Transform _attachmentPoint;
 
-    private void Start()
+    private void Awake()
     {
         _mr = GetComponent<MeshRenderer>();
         _mr.enabled = false;
@@ -62,7 +62,6 @@ public class Laser : Weapon
     {
         Vector2 desiredAngle = movement * _maxAngle;
         _currentAngle = new Vector2(Mathf.MoveTowards(_currentAngle.x, desiredAngle.x, _rotateSpeed), Mathf.MoveTowards(_currentAngle.y, desiredAngle.y, _rotateSpeed));
-
     }
 
     protected override void OnFireEnabled()

@@ -11,6 +11,10 @@ public class GravityObject : MonoBehaviour
         _beamable = true,
         _sinkable = true;
 
+    [SerializeField]
+    private float
+        _minColSize = 0.3f;
+
     private bool _beamed = false;
 
     private GlobeObject _globeObject;
@@ -24,7 +28,8 @@ public class GravityObject : MonoBehaviour
         Body.useGravity = false;
         Body.isKinematic = _startKinematic;
         _globeObject = GetComponent<GlobeObject>();
-        _col = GetComponent<Collider>();
+
+        SetMinColliderSize();
     }
 	
 	protected virtual void Update ()
@@ -65,16 +70,40 @@ public class GravityObject : MonoBehaviour
         if (Kinematic || Col == null)
             return false;
 
-        Vector3 highestPoint = Col.ClosestPoint(Col.bounds.center + transform.position.normalized * Col.bounds.extents.magnitude);
-        Vector3 globePos = Globe.SceneToGlobePosition(highestPoint);
+        RaycastHit hit;
 
-        return globePos.y < -20;
+        Vector3 highestPoint = Col.ClosestPointOnBounds(Col.bounds.center + transform.position.normalized * Col.bounds.extents.magnitude);
+        Vector3 globePos = Globe.SceneToGlobePosition(highestPoint, out hit);
+
+        if (globePos.y >= 0)
+            return false;
+
+        if (hit.point.magnitude > Globe.WaterLevel)
+        {
+            Vector3 desired = hit.point;
+            transform.position += desired - Col.bounds.center;
+            Body.velocity = new Vector3();
+            return false;
+        }
+        return true;
     }
 
     private void Sink()
     {
         Instantiate(ServiceLocator.Locate<Effects>().Splash, transform.position, transform.rotation);
+
+        DestroyableObject destroyableObject = GetComponent<DestroyableObject>();
         Destroy(gameObject);
+    }
+
+    private void SetMinColliderSize()
+    {
+        BoxCollider box = GetComponent<BoxCollider>();
+
+        if (box == null)
+            return;
+
+        box.size = Vector3.Max(box.size, new Vector3(_minColSize, _minColSize, _minColSize));
     }
 
     public Globe Globe

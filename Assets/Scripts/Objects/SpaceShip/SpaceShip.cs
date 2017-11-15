@@ -9,10 +9,9 @@ public class SpaceShip : MovingObject
 
     [SerializeField]
     private GameObject[] _weaponPrefabs;
+    private Weapon[]     _spawnedWeapons;
 
-    [SerializeField]
-    private GameObject _currentWeapon;
-    private Weapon _weaponComponent;
+    private Weapon _currentWeapon;
 
     int _weaponSelector = 0;
 
@@ -20,16 +19,19 @@ public class SpaceShip : MovingObject
     {
         base.Awake();
         ServiceLocator.Provide(this);
-    }
 
-    private void Start()
-    {
-        SelectWeapon(0);
-    }
+        _spawnedWeapons = new Weapon[_weaponPrefabs.Length];
 
-    private void Update()
-    {
-        SelectWeapon();
+        for (int i = 0; i < _weaponPrefabs.Length; i++)
+        {
+            GameObject newPrefab = GameObject.Instantiate(_weaponPrefabs[i]);
+            newPrefab.transform.parent = _weaponAttachment;
+            newPrefab.transform.localPosition = new Vector3();
+
+            _spawnedWeapons[i] = newPrefab.GetComponent<Weapon>();
+            newPrefab.SetActive(false);
+        }
+        SetWeapon(_spawnedWeapons[0]);
     }
 
     void FixedUpdate ()
@@ -40,76 +42,87 @@ public class SpaceShip : MovingObject
         Move(move);
         RotateTo(move, false);
 
-        if (_weaponComponent != null)
-        {
-            _weaponComponent.Aim(new Vector2(move2D.x * MovementSpeed.x, move2D.y * MovementSpeed.z));
+        SelectWeapon();
 
-            if (Input.GetKey(KeyCode.Space))
-                _weaponComponent.Fire();
+        if (_currentWeapon != null)
+        {
+            _currentWeapon.Aim(new Vector2(move2D.x * MovementSpeed.x, move2D.y * MovementSpeed.z));
+
+            if (Input.GetButton("Select / Shoot") || Input.GetButton("Beam"))
+                _currentWeapon.Fire();
             else
-                _weaponComponent.Hold();
+                _currentWeapon.Release();
         }
     }
 
-    private void SelectWeapon(int weapon = -1)
+    private void SelectWeapon()
     {
-        if (weapon >= 0 && weapon < _weaponPrefabs.Length)
+        if (Input.GetButton("Beam"))
         {
-            SetWeapon(_weaponPrefabs[weapon]);
-            _weaponSelector = weapon;
+            if (_currentWeapon.GetType() != typeof(Beam))
+                SetWeapon(typeof(Beam));
+
             return;
         }
 
-        int temp = _weaponSelector;
+        if (Input.GetButton("Laser"))
+        {
+            if (_currentWeapon.GetType() != typeof(Laser))
+                SetWeapon(typeof(Laser));
+
+            return;
+        }
 
         if (Input.GetKeyDown(KeyCode.Q))
             _weaponSelector--;
 
-        if (Input.GetKeyDown(KeyCode.E))
+        else if (Input.GetKeyDown(KeyCode.E))
             _weaponSelector++;
+        else
+            return;
 
         if (_weaponSelector < 0)
             _weaponSelector += _weaponPrefabs.Length;
 
         _weaponSelector %= _weaponPrefabs.Length;
 
-        if (temp != _weaponSelector)
-            SetWeapon(_weaponPrefabs[_weaponSelector]);
+        SetWeapon(_spawnedWeapons[_weaponSelector]);
     }
 
-    public void SetWeapon(GameObject prefab)
+    public void SetWeapon(System.Type weaponType)
     {
-        if (!Application.isPlaying)
+        for (int i = 0; i < _spawnedWeapons.Length; i++)
+        {
+            Weapon weapon = _spawnedWeapons[i];
+
+            if (weapon.GetType() != weaponType)
+                continue;
+
+            if (_currentWeapon != null)
+                _currentWeapon.gameObject.SetActive(false);
+
+            _currentWeapon = weapon;
+            weapon.gameObject.SetActive(true);
+
+            _weaponSelector = i;
             return;
+        }
+    }
 
-        if (_weaponComponent != null)
-            Destroy(_weaponComponent.gameObject);
+    private void SetWeapon(Weapon weapon)
+    {
+        if (_currentWeapon != null)
+            _currentWeapon.gameObject.SetActive(false);
 
-        if (prefab == null || prefab.GetComponent<Weapon>() == null)
-            return;
-
-        GameObject newPrefab = GameObject.Instantiate(prefab);
-        _weaponComponent = newPrefab.GetComponent<Weapon>();
-
-        newPrefab.transform.parent = _weaponAttachment;
-        newPrefab.transform.localPosition = new Vector3();
+        _currentWeapon = weapon;
+        _currentWeapon.gameObject.SetActive(true);
     }
 
     private Vector2 Movement()
     {
         Vector2 move = new Vector2();
 
-        if (Input.GetKey(KeyCode.S))
-            move += new Vector2(0, 1);
-
-        if (Input.GetKey(KeyCode.W))
-            move += new Vector2(0, -1);
-
-        if (Input.GetKey(KeyCode.A))
-            move += new Vector2(1, 0);
-
-        if (Input.GetKey(KeyCode.D))
-            move += new Vector2(-1, 0);
+        move += new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
 
         return move;
     }
@@ -117,6 +130,19 @@ public class SpaceShip : MovingObject
     protected override void OnValidate()
     {
         base.OnValidate();
-        SetWeapon(_currentWeapon);
+    }
+
+    private void OnDestroy()
+    {
+        if (_currentWeapon != null)
+            Destroy(_currentWeapon.gameObject);
+
+        ServiceLocator.Locate<Menu>().Stop(2);
+    }
+
+    IEnumerator ReturnToMenu()
+    {
+        yield return new WaitForSeconds(2);
+        ServiceLocator.Locate<Menu>().Stop();
     }
 }

@@ -138,3 +138,4 @@ MonoBehaviour:
   _startKinematic: 1
   _beamable: 1
   _sinkable: 1
+  _minColSize: 0.3

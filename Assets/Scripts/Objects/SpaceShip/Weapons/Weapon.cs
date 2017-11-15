@@ -16,12 +16,17 @@ public abstract class Weapon : MonoBehaviour
         OnFire();
     }
 
-    public void Hold()
+    public void Release()
     {
         if (_firing)
             OnFireDisabled();
 
         _firing = false;
+    }
+
+    private void OnDisable()
+    {
+        Release();
     }
 
     protected virtual void OnFireEnabled() { }

@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿#if UNITY_EDITOR
 using UnityEngine;
 using UnityEditor;
 
@@ -58,3 +57,4 @@ public class GlobePainter : Editor
             globe.Draw(new int[] { v1, v2, v3 });
     }
 }
+#endif

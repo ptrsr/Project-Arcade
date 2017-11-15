@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor.Callbacks;
 using System;
 using System.IO;
 
@@ -82,6 +81,8 @@ public class Globe : MonoBehaviour
         _waveMap,
         _paintMap;
 
+    private Vector2 _paintMapSize;
+
     #region LEVEL SETTINGS
     public static event OnGlobeChange onGlobeChange;
 
@@ -145,9 +146,14 @@ public class Globe : MonoBehaviour
         MF.mesh = mesh;
         MC.sharedMesh = mesh;
 
-        Texture2D loadedPaintMap = LoadPaintMap();
+        int width = (int)Math.Sqrt(mesh.vertexCount);
+        int height = width + 1;
 
-        _paintMap = loadedPaintMap != null ? loadedPaintMap : CreateWorldTexture(mesh.vertexCount);
+        _paintMapSize = new Vector2(width, height);
+
+        Texture2D loadedPaintMap = LoadPaintMap(width, height);
+
+        _paintMap = loadedPaintMap != null ? loadedPaintMap : CreateWorldTexture(width, height);
     }
 
     private void SetUniforms()
@@ -190,11 +196,8 @@ public class Globe : MonoBehaviour
 
     }
 
-    private Texture2D CreateWorldTexture(int vertices)
+    private Texture2D CreateWorldTexture(int width, int height)
     {
-        int width = (int)Math.Sqrt(vertices);
-        int height = width + 1;
-
         Texture2D paintMap = new Texture2D(width, height);
         Color[] block = new Color[width * height];
 
@@ -384,13 +387,15 @@ public class Globe : MonoBehaviour
         File.WriteAllBytes(Application.dataPath + "/Textures/Globe/Paint Map.png", png);
     }
 
-    public Texture2D LoadPaintMap()
+    public Texture2D LoadPaintMap(int width, int height)
     {
-        Texture2D paintMap = null;
+        Texture2D paintMap = new Texture2D(width, height);
 
         try
         {
-            byte[] data = File.ReadAllBytes(Application.dataPath + "/Textures/Globe/Paint Map.png");
+            byte[] data = null;
+
+            data = File.ReadAllBytes(Application.dataPath + "/Textures/Globe/Paint Map.png");
 
             if (data != null)
                 print("at least this works!");
@@ -460,7 +465,7 @@ public class Globe : MonoBehaviour
         get { return Radius + _waterLevel; }
     }
 
-    public static Vector3 SceneToGlobePosition(Vector3 scenePosition)
+    public static Vector3 SceneToGlobePosition(Vector3 scenePosition, out RaycastHit hit)
     {
         Globe globe = ServiceLocator.Locate<Globe>();
 
@@ -468,14 +473,18 @@ public class Globe : MonoBehaviour
         Vector3 rayGlobePos = normalizedScenePosition * (globe.MaxHeight + 1);
         Vector3 globePosition = new Vector3(Mathf.Atan2(normalizedScenePosition.x, normalizedScenePosition.y), scenePosition.magnitude, Mathf.Sin(normalizedScenePosition.z));
 
-        RaycastHit hit;
-
         if (Physics.Raycast(rayGlobePos, -normalizedScenePosition, out hit, globe.MaxHeight - globe.WaterLevel + 1, 1 << 10))
             globePosition.y = scenePosition.magnitude - hit.point.magnitude;
         else
             globePosition.y = scenePosition.magnitude - globe.WaterLevel;
 
         return globePosition;
+    }
+
+    public static Vector3 SceneToGlobePosition(Vector3 scenePosition)
+    {
+        RaycastHit temp;
+        return SceneToGlobePosition(scenePosition, out temp);
     }
 
     public static Vector3 GlobeToScenePosition(Vector3 globePosition)
@@ -509,7 +518,8 @@ public class Globe : MonoBehaviour
     }
     #endregion
 
-    [DidReloadScripts]
+#if UNITY_EDITOR
+    [UnityEditor.Callbacks.DidReloadScripts]
     private static void OnSceneReload()
     {
         Globe globe = ServiceLocator.Locate<Globe>();
@@ -517,4 +527,5 @@ public class Globe : MonoBehaviour
         if (globe != null)
             globe.SetUniforms();
     }
+#endif
 }

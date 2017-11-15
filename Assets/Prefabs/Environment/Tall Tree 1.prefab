@@ -126,6 +126,7 @@ MonoBehaviour:
   _startKinematic: 1
   _beamable: 1
   _sinkable: 1
+  _minColSize: 0.3
 --- !u!114 &114296705748757978
 MonoBehaviour:
   m_ObjectHideFlags: 1

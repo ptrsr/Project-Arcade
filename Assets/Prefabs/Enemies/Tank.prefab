@@ -408,6 +408,7 @@ MonoBehaviour:
   _startKinematic: 1
   _beamable: 1
   _sinkable: 1
+  _minColSize: 0.3
 --- !u!114 &114542130702644072
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -450,6 +451,8 @@ MonoBehaviour:
   - {fileID: 114175586558588906}
   - {fileID: 114906503747269378}
   - {fileID: 114542130702644072}
+  _execludeFromScore: 0
+  _noParts: 0
 --- !u!114 &114906503747269378
 MonoBehaviour:
   m_ObjectHideFlags: 1

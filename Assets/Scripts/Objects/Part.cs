@@ -20,7 +20,7 @@ public class Part : GravityObject
     private float _despawnTimer;
     private bool
         _despawn = false,
-        _emits,
+        _pickup,
         _small;
 
     Vector3 _explodeForce = new Vector3();
@@ -54,15 +54,14 @@ public class Part : GravityObject
 
         float size = Col.bounds.size.magnitude;
 
-        _emits = size < _maxEmitSize;
+        _pickup = size < _maxEmitSize;
         _small = size < _minEmitSize;
 
         if (_small)
-        {
             Sinkable = false;
+
+        if (!_pickup)
             Beamable = false;
-            _emits   = false;
-        }
 
         _despawnTimer = _despawnTime;
 
@@ -80,7 +79,7 @@ public class Part : GravityObject
     {
         base.Update();
 
-        if (_emits)
+        if (_pickup)
             Emit();
 
         if (_despawn)
@@ -118,6 +117,20 @@ public class Part : GravityObject
 
         if (Globe.SceneToGlobePosition(transform.position).y < _despawnDepth)
             Destroy(gameObject);
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (!_pickup)
+            return;
+
+        SpaceShip player = collision.transform.root.GetComponent<SpaceShip>();
+
+        if (player == null)
+            return;
+
+        player.GetComponent<DestroyableObject>().Heal(1);
+        Destroy(gameObject);
     }
 
     public Vector3 ExplodeForce

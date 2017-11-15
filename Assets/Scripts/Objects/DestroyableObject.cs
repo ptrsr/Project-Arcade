@@ -17,16 +17,28 @@ public class DestroyableObject : MonoBehaviour
     [SerializeField]
     private MonoBehaviour[] _removedBehaviours;
 
+    [SerializeField]
+    private bool
+        _execludeFromScore = false,
+        _noParts = false;
+
     private bool
         _exploded = false,
         _destroyableByImpact = false,
-        _registered = false;
+        _registered = false,
+        _quitting = false;
+
+
+    private float _maxHealth;
 
     private Rigidbody _rigidBody;
 
     private void Awake()
     {
+        if (!_execludeFromScore)
         ObjectSafe.onGameStart += RegisterAsScore;
+
+        _maxHealth = _health;
     }
 
     private void RegisterAsScore(ObjectSafe safe)
@@ -57,48 +69,53 @@ public class DestroyableObject : MonoBehaviour
 
     public void Damage(float damage)
     {
-        _health -= damage;
+        _health -= Mathf.Abs(damage);
+    }
+
+    public void Heal(float heal)
+    {
+        _health = Mathf.Min(_health + Mathf.Abs(heal), _maxHealth);
     }
 
     public void Explode()
     {
         GameObject destroyedObject;
 
-        if (_destroyedPrefab != null)
+        if (!_noParts)
         {
-            destroyedObject = Instantiate(_destroyedPrefab, transform.position, transform.rotation);
-            destroyedObject.transform.localScale = transform.lossyScale;
-        }
-        else
-            destroyedObject = gameObject;
+            if (_destroyedPrefab != null)
+            {
+                destroyedObject = Instantiate(_destroyedPrefab, transform.position, transform.rotation);
+                destroyedObject.transform.localScale = transform.lossyScale;
+            }
+            else
+                destroyedObject = gameObject;
 
-        List<GameObject> parts = GetAllVisualParts(destroyedObject);
+            List<GameObject> parts = GetAllVisualParts(destroyedObject);
 
-        foreach (MonoBehaviour behaviour in _removedBehaviours)
-            Destroy(behaviour);
 
-        foreach (GameObject part in parts)
-        {
-            Part PartComp = part.AddComponent<Part>();
+            foreach (GameObject part in parts)
+            {
+                Part PartComp = part.AddComponent<Part>();
 
-            Vector3 force = (part.transform.position - transform.position).normalized * _partForceMulti;
+                Vector3 force = (part.transform.position - transform.position).normalized * _partForceMulti;
 
-            if (_rigidBody != null)
-                force += _rigidBody.velocity;
+                if (_rigidBody != null)
+                    force += _rigidBody.velocity;
 
-            PartComp.ExplodeForce = force;
+                PartComp.ExplodeForce = force;
+            }
         }
 
         ExplodeAnimation();
         DamageSurroundings();
 
-        if (_destroyedPrefab != null)
+        if (_destroyedPrefab != null || _noParts)
             Destroy(gameObject);
 
         _exploded = true;
 
-        if (_registered)
-            ServiceLocator.Locate<Score>().AddPoint();
+        Destroy(this);
     }
 
     private void DamageSurroundings()
@@ -151,5 +168,27 @@ public class DestroyableObject : MonoBehaviour
     {
         get { return _registered;  }
         set { _registered = value; }
+    }
+
+    public float Health
+    {
+        get { return _health; }
+    }
+
+    private void OnDestroy()
+    {
+        if (ServiceLocator.Locate<Menu>().GameState == GameState.Menu || _quitting)
+            return;
+
+        foreach (MonoBehaviour behaviour in _removedBehaviours)
+            Destroy(behaviour);
+
+        if (_registered)
+            ServiceLocator.Locate<Score>().AddPoint();
+    }
+
+    private void OnApplicationQuit()
+    {
+        _quitting = true;
     }
 }

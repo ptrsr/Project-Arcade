@@ -1,6 +1,8 @@
-﻿using UnityEngine;
+﻿#if UNITY_EDITOR
+using UnityEngine;
 using System.Collections;
 using UnityEditor;
+
 
 [ExecuteInEditMode] [CustomEditor(typeof(GlobeObject), true)]
 public class Placer : Editor
@@ -56,3 +58,5 @@ public class Placer : Editor
             _placing = false;
     }
 }
+
+#endif

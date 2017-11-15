@@ -19,8 +19,6 @@ public class Beam : Weapon
         _effectSpeed = 1,
         _effectMulti = 1;
 
-    private bool _firing;
-
     private Material _mat;
     private MeshRenderer _mr;
 
@@ -42,7 +40,6 @@ public class Beam : Weapon
         _beamableObjects = new List<GravityObject>();
 
         transform.localEulerAngles = new Vector3(90, 0, 0);
-        _firing = false;
     }
 
     private Material InitShader(Shader shader)
@@ -75,20 +72,27 @@ public class Beam : Weapon
 
         Vector3 deltaPosition = transform.position - _lastPosition;
 
-        foreach (GravityObject gObject in _beamableObjects)
+        for (int i = _beamableObjects.Count - 1; i >= 0; i--)
         {
-            if (!gObject.Beamable)
+            GravityObject gravityObject = _beamableObjects[i];
+
+            if (gravityObject == null)
+            {
+                _beamableObjects.RemoveAt(i);
+                continue;
+            }
+
+            if (!gravityObject.Beamable)
                 continue;
 
-            gObject.ApplyForce(new Vector3());
-            gObject.transform.position += (transform.parent.position - gObject.transform.position).normalized * _beamSpeed + deltaPosition;
+            gravityObject.ApplyForce(new Vector3());
+            gravityObject.transform.position += (transform.parent.position - gravityObject.transform.position).normalized * _beamSpeed + deltaPosition;
         }
         _lastPosition = transform.position;
     }
 
     protected override void OnFireEnabled()
     {
-        _firing = true;
         _mr.enabled = true;
         _lastPosition = transform.position;
 
@@ -104,7 +108,6 @@ public class Beam : Weapon
 
     protected override void OnFireDisabled()
     {
-        _firing = false;
         _mr.enabled = false;
 
         foreach (GravityObject gObject in _beamableObjects)
@@ -139,7 +142,7 @@ public class Beam : Weapon
 
         if (_beamableObjects.Contains(gObject))
         {
-            if (_firing)
+            if (Firing)
                 gObject.Beamed = false;
             _beamableObjects.Remove(gObject);
         }

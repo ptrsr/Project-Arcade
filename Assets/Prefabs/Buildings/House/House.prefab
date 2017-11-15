@@ -112,6 +112,8 @@ MonoBehaviour:
   _destroyedPrefab: {fileID: 1052076542714032, guid: df9763b32b06dcc4989b4a65ecc0ccc3,
     type: 2}
   _removedBehaviours: []
+  _execludeFromScore: 0
+  _noParts: 0
 --- !u!114 &114902523898772232
 MonoBehaviour:
   m_ObjectHideFlags: 1

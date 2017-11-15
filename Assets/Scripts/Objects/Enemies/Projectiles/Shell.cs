@@ -24,8 +24,9 @@ public class Shell : Projectile
             Destroy(gameObject);
     }
 
-    private void OnCollisionEnter(Collision collision)
+    protected override void OnCollisionEnter(Collision collision)
     {
+        base.OnCollisionEnter(collision);
         Destroy(gameObject);
     }
 }

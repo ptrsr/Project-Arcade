@@ -1,7 +1,8 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor;
+
+public delegate void OnAction();
+
 
 public enum GameState
 {
@@ -11,6 +12,10 @@ public enum GameState
 
 public class Menu : MonoBehaviour
 {
+
+    public static OnAction OnPlay;
+    public static OnAction OnStop;
+
     private enum MenuState
     {
         Play,
@@ -25,8 +30,7 @@ public class Menu : MonoBehaviour
     [SerializeField]
     private MenuItem[] _items;
 
-    private ObjectSafe _objectSafe;
-    private Score      _score;
+    private float _hold = 0;
 
     private void Awake()
     {
@@ -35,10 +39,7 @@ public class Menu : MonoBehaviour
 
     void Start ()
     {
-        _objectSafe = ServiceLocator.Locate<ObjectSafe>();
-        _score      = ServiceLocator.Locate<Score>();
-
-        _objectSafe.Start();
+        ServiceLocator.Locate<ObjectSafe>().Start();
 
         foreach (MenuItem item in _items)
             item.Selected = false;
@@ -48,18 +49,20 @@ public class Menu : MonoBehaviour
 	
 	void Update ()
     {
+        float selector = Input.GetAxis("Selector 1") + Input.GetAxis("Selector 2");
+
         if (_gameState == GameState.Menu)
         {
-            if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
+            if (Input.GetButtonDown("Up") || (selector > 0.9f && _hold == 0))
                 ChangeState(1);
 
-            if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
+            if (Input.GetButtonDown("Down") || (selector < -0.9f && _hold == 0))
                 ChangeState(-1);
 
-            if (Input.GetKeyDown(KeyCode.Escape))
+            if (Input.GetButtonDown("Quit"))
                 Quit();
 
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (Input.GetButton("Select / Shoot"))
             {
                 if (_menuState == MenuState.Play)
                     Play();
@@ -70,21 +73,22 @@ public class Menu : MonoBehaviour
         }
 
         if (_gameState == GameState.Game)
-            if (Input.GetKeyDown(KeyCode.Escape))
-                ReturnToMenu();
+            if (Input.GetButtonDown("Quit"))
+                Stop();
+
+        _hold = selector;
     }
 
     private void Play()
     {
         _gameState = GameState.Game;
-        _objectSafe.Spawn();
+        OnPlay();
     }
 
-    private void ReturnToMenu()
+    public void Stop()
     {
         _gameState = GameState.Menu;
-        _score.ResetScore();
-        _objectSafe.Delete();
+        OnStop();
     }
 
     private void Quit()
@@ -111,6 +115,18 @@ public class Menu : MonoBehaviour
             _menuState -= max + 1;
 
         _items[System.Convert.ToInt32(_menuState)].Selected = true;
+    }
+
+
+    public void Stop(float wait)
+    {
+        StartCoroutine(WaitAndStop(wait));
+    }
+
+    private IEnumerator WaitAndStop(float wait)
+    {
+        yield return new WaitForSeconds(wait);
+        Stop();
     }
 
     public GameState GameState

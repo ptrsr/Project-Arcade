@@ -143,4 +143,3 @@ MonoBehaviour:
   _weaponPrefabs:
   - {fileID: 1731094483438550, guid: 4c9de6064925ecf49ba55ef5177794f2, type: 2}
   - {fileID: 1854513636334842, guid: 819bb38bbb0bb3147952acff53d30210, type: 2}
-  _currentWeapon: {fileID: 0}

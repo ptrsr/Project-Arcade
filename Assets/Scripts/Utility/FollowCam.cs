@@ -68,7 +68,7 @@ public class FollowCam : MonoBehaviour
         _linear = 1 - Vector3.Distance(transform.position, _menu.transform.position) / _delta;
         _postFX.Grayout = _linear;
 
-        if (_menu.GameState == GameState.Game)
+        if (_menu.GameState == GameState.Game && _target != null)
             Follow(_target, GetFocusPosition(_target));
 
         if (_menu.GameState == GameState.Menu)
