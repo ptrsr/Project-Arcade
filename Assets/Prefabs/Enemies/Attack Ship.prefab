@@ -279,8 +279,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1198496714131576}
-  m_LocalRotation: {x: -0.1703368, y: -0.78323483, z: -0.09161768, w: 0.5908763}
-  m_LocalPosition: {x: -0.0000023841858, y: 214.4256, z: 0.0000023841858}
+  m_LocalRotation: {x: -0.15076257, y: -0.66771644, z: -0.119810976, w: 0.7190764}
+  m_LocalPosition: {x: 78.505066, y: 194.5275, z: -11.925728}
   m_LocalScale: {x: 0.010000002, y: 0.01, z: 0.010000002}
   m_Children:
   - {fileID: 4582751886243088}
@@ -624,16 +624,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _rotateType: 1
-  _headRotationSpeed: 1
-  _barrelRotationSpeed: 2
+  _headRotationSpeed: 8
+  _barrelRotationSpeed: 8
   _head: {fileID: 4582751886243088}
   _barrel: {fileID: 4804351100619636}
   _projectileSpawnPoints:
   - {fileID: 4562648221705830}
   _projectilePrefab: {fileID: 1759946015971640, guid: 98cc973f071cd5748b31abfe7c29853d,
     type: 2}
-  _reloadSpeed: 3
-  _shootAngle: 5
+  _reloadSpeed: 0.5
+  _shootAngle: 20
   _range: 20
 --- !u!114 &114482543463966902
 MonoBehaviour:
@@ -646,18 +646,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88010b0a93f26d7488c9b53df2625763, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _globePosition: {x: 0, y: 0, z: 0}
+  _globePosition: {x: 0.38357845, y: -0.8, z: -0.056789972}
   _rotateType: 0
   _acceleration: 0.9
-  _rotateSpeed: 0
-  _movementSpeed: {x: 0, y: 0, z: 0}
-  _range: 0
-  _minimumDistance: 0
-  _resetVelocity: 0
+  _rotateSpeed: 90
+  _movementSpeed: {x: 10, y: 0, z: 10}
+  _range: 40
+  _minimumDistance: 5
+  _resetVelocity: 0.1
   _resetHeight: 0
-  _explodeNormal: 0
-  _resetDistance: 0
-  _moveDist: {x: 0, y: 0}
+  _explodeNormal: 10
+  _resetDistance: 1
+  _moveDist: {x: 337.86, y: 699.8}
 --- !u!114 &114601823657735528
 MonoBehaviour:
   m_ObjectHideFlags: 1

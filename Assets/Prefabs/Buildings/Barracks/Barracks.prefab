@@ -66,14 +66,14 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1917465446665122}
-  m_LocalRotation: {x: -0, y: 0, z: -0.025563639, w: 0.9996732}
-  m_LocalPosition: {x: -0.0000023896341, y: 214.9156, z: 0.0000023896341}
+  m_LocalRotation: {x: -0.009785962, y: 0.88484603, z: 0.012920634, w: -0.46560153}
+  m_LocalPosition: {x: 2.6101859, y: 214.72688, z: 8.346246}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4032330548291118}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 1.3700001, y: 4.9040003, z: -4.4620004}
 --- !u!23 &23688561892616598
 MeshRenderer:
   m_ObjectHideFlags: 1
@@ -172,7 +172,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2be749cf409eee4a94f65e2c914d131, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _health: 3
+  _health: 0.2
   _explosionSize: 1
   _partForceMulti: 3
   _destroyedPrefab: {fileID: 1016811097034430, guid: 8e76a9d02f575cc4daebebe047b806d6,
@@ -191,4 +191,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b05046a889fd194c9974568277fc1a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _globePosition: {x: 0, y: 0.48999977, z: 0}
+  _globePosition: {x: 0.012155228, y: 0.48999977, z: 0.038846727}
