@@ -6,17 +6,17 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 0
-    path: Assets/Scenes/Main-Menu.unity
+    path: 
     guid: 690749e38bb702546aec3e43fd029e32
   - enabled: 0
-    path: Assets/Scenes/Scene-Ruud-Copy(0).unity
+    path: 
     guid: 9f44e8ea82959c6439f1e3e77cd4bd60
   - enabled: 0
-    path: Assets/Scenes/Highscores.unity
+    path: 
     guid: 1a91da470bc832747ba09419d181b6b9
   - enabled: 0
-    path: Assets/Scenes/Controls.unity
+    path: 
     guid: ce66a3e72b811b44da214096bf010c1c
   - enabled: 0
-    path: Assets/Scenes/Scene-Etienne2.unity
+    path: 
     guid: 06290962ea718bf49941ab7f5c19dbee

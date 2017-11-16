@@ -361,6 +361,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04aa74f59c08e45428bcc98707d40558, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _damage: 5
   _force: 20
   _rotationSpeed: 100
   _missAngle: 100
@@ -379,10 +380,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2be749cf409eee4a94f65e2c914d131, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _sinkable: 1
   _health: 0
   _explosionSize: 0
   _partForceMulti: 4
   _destroyedPrefab: {fileID: 0}
   _removedBehaviours:
   - {fileID: 114044284607787546}
+  _execludeFromScore: 0
+  _noParts: 0
