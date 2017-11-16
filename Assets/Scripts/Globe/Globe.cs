@@ -397,9 +397,6 @@ public class Globe : MonoBehaviour
 
             data = File.ReadAllBytes(Application.dataPath + "/Textures/Globe/Paint Map.png");
 
-            if (data != null)
-                print("at least this works!");
-
             paintMap.LoadImage(data);
         } catch { Debug.LogError("Paint map not found!"); }
 

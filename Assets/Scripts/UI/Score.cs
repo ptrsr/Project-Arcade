@@ -32,6 +32,8 @@ public class Score : MonoBehaviour
 
     private OnAction _updater;
 
+    private bool _quitting = false;
+
     private void Awake()
     {
         Menu.OnPlay += ShowCanvas;
@@ -73,6 +75,9 @@ public class Score : MonoBehaviour
 
     public void AddPoint()
     {
+        if (_quitting)
+            return;
+
         _currentScore++;
         _scoreText.text = _currentScore + "/" + _maxScore;
 
@@ -126,5 +131,10 @@ public class Score : MonoBehaviour
             _canvas.alpha = 0;
             _updater -= HideCanvas;
         }
+    }
+
+    private void OnApplicationQuit()
+    {
+        _quitting = true;
     }
 }

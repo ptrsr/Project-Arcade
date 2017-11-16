@@ -16,6 +16,8 @@ public class Menu : MonoBehaviour
     public static OnAction OnPlay;
     public static OnAction OnStop;
 
+    private bool _quitting = false;
+
     private enum MenuState
     {
         Play,
@@ -120,6 +122,9 @@ public class Menu : MonoBehaviour
 
     public void Stop(float wait)
     {
+        if (_quitting)
+            return;
+
         StartCoroutine(WaitAndStop(wait));
     }
 
@@ -132,5 +137,10 @@ public class Menu : MonoBehaviour
     public GameState GameState
     {
         get { return _gameState; }
+    }
+
+    private void OnApplicationQuit()
+    {
+        _quitting = true;
     }
 }
